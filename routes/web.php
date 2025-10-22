@@ -1,0 +1,74 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+use App\Models\Product;
+
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\AuthController;
+
+// Admin
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\InventoryController; // <- si usas el módulo de inventario nuevo
+
+/* =====================  CATÁLOGO (HOME)  ===================== */
+Route::get('/', function (Request $request) {
+    $q    = trim((string) $request->query('q', ''));
+    $sort = (string) $request->query('sort', 'name_asc');
+
+    $query = Product::select('id','name','price','image_url','stock');
+    if ($q !== '') $query->where('name','like',"%{$q}%");
+
+    $query->when($sort === 'price_asc',  fn($q) => $q->orderBy('price'))
+          ->when($sort === 'price_desc', fn($q) => $q->orderBy('price','desc'))
+          ->when($sort === 'stock_desc', fn($q) => $q->orderBy('stock','desc'))
+          ->when(!in_array($sort,['price_asc','price_desc','stock_desc']), fn($q) => $q->orderBy('name'));
+
+    $products = $query->paginate(12)->withQueryString();
+    return view('welcome', compact('products','q','sort'));
+})->name('catalog.index');
+
+/* =====================  CARRITO + CHECKOUT  ===================== */
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/{productId}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/{productId}', [CartController::class, 'remove'])->name('cart.remove');
+Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
+
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::get('/order/success/{order}', [CheckoutController::class, 'success'])->name('order.success');
+
+/* =====================  PÁGINA ESTÁTICA  ===================== */
+Route::view('/nosotros', 'pages.about')->name('about');
+
+/* =====================  AUTH  ===================== */
+Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+/* =====================  ADMIN (ÚNICO GRUPO, PROTEGIDO)  ===================== */
+Route::middleware(['auth','admin'])
+    ->prefix('admin')->as('admin.')
+    ->group(function () {
+        // Si DashboardController es invocable:
+        Route::get('/', DashboardController::class)->name('dashboard');
+        // Si NO es invocable, usa:
+        // Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+        // INVENTARIO (módulo nuevo)
+        Route::get('/inventario',  [InventoryController::class, 'index'])->name('inventory.index');
+        Route::post('/inventario', [InventoryController::class, 'store'])->name('inventory.store');
+        Route::delete('/inventario/{inventory}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
+
+        // CRUD de productos
+        Route::resource('products', AdminProductController::class);
+    });
+
+/* ===== (Opcional) si quieres mantener tus rutas antiguas públicas de COMPRAS =====
+use App\Http\Controllers\CompraController;
+Route::get('/compras',  [CompraController::class, 'index'])->name('compras.index');
+Route::post('/compras', [CompraController::class, 'store'])->name('compras.store');
+*/
