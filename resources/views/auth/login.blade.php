@@ -58,6 +58,10 @@
       {{-- BOTÓN --}}
       <button class="bg-black text-white rounded px-4 py-2">Entrar</button>
     </form>
+
+    <p class="mt-3 text-center">
+      ¿No tienes cuenta? <a href="{{ route('register') }}" class="text-blue-600">Regístrate como cliente</a>
+    </p>
   </div>
 </div>
 

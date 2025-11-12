@@ -2,7 +2,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -30,5 +32,32 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login');
+    }
+
+    // Mostrar formulario de registro
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
+
+    // Procesar registro de cliente
+    public function register(Request $request)
+    {
+        $data = $request->validate([
+            'name' => ['required','string','max:255'],
+            'email' => ['required','email','max:255','unique:users,email'],
+            'password' => ['required','confirmed','min:8'],
+        ]);
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'is_admin' => false,
+        ]);
+
+        Auth::login($user);
+
+        return redirect()->route('catalog.index')->with('success','Bienvenido. Has iniciado sesión.');
     }
 }
