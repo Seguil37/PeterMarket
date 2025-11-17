@@ -8,35 +8,98 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function showLogin() {
-        if (Auth::check()) return redirect()->route('admin.dashboard');
+    /**
+     * Muestra el formulario de login para clientes.
+     */
+    public function showCustomerLogin()
+    {
+        if (Auth::check()) {
+            return Auth::user()->is_admin
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('catalog.index');
+        }
+
         return view('auth.login');
     }
 
-    public function login(Request $request) {
+    /**
+     * Procesa el login de clientes.
+     */
+    public function customerLogin(Request $request)
+    {
         $cred = $request->validate([
             'email' => ['required','email'],
             'password' => ['required','string'],
         ]);
 
-        if (Auth::attempt($cred, $request->boolean('remember'))) {
+        if (Auth::attempt(array_merge($cred, ['is_admin' => false]), $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('catalog.index'));
+        }
+
+        return back()->withErrors(['email' => 'Credenciales inválidas o acceso no autorizado.'])->onlyInput('email');
+    }
+
+    /**
+     * Muestra el formulario de login para administradores.
+     */
+    public function showAdminLogin()
+    {
+        if (Auth::check()) {
+            return Auth::user()->is_admin
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('catalog.index');
+        }
+
+        return view('admin.auth.login');
+    }
+
+    /**
+     * Procesa el login de administradores.
+     */
+    public function adminLogin(Request $request)
+    {
+        $cred = $request->validate([
+            'email' => ['required','email'],
+            'password' => ['required','string'],
+        ]);
+
+        $adminCredentials = array_merge($cred, [
+            'is_admin' => true,
+            'is_active' => true,
+        ]);
+
+        if (Auth::attempt($adminCredentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        return back()->withErrors(['email' => 'Credenciales inválidas.'])->onlyInput('email');
+        return back()->withErrors(['email' => 'Credenciales inválidas o acceso no autorizado.'])->onlyInput('email');
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
+        $redirectRoute = 'login';
+        if (Auth::check()) {
+            $redirectRoute = Auth::user()->is_admin ? 'admin.login' : 'catalog.index';
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
+
+        return redirect()->route($redirectRoute);
     }
 
     // Mostrar formulario de registro
     public function showRegister()
     {
+        if (Auth::check()) {
+            return Auth::user()->is_admin
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('catalog.index');
+        }
+
         return view('auth.register');
     }
 
@@ -54,6 +117,8 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'is_admin' => false,
+            'is_active' => true,
+            'is_master_admin' => false,
         ]);
 
         Auth::login($user);

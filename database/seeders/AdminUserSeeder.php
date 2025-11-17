@@ -15,9 +15,11 @@ class AdminUserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@tuapp.com'],
             [
-                'name' => 'Admin',
+                'name' => 'Admin Master',
                 'password' => Hash::make('clave-super-segura'), // cámbiala
                 'is_admin' => true,
+                'is_active' => true,
+                'is_master_admin' => true,
             ]
         );
     }

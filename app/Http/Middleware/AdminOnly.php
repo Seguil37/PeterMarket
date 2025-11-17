@@ -12,7 +12,7 @@ class AdminOnly
         /** @var \App\Models\User|null $user */
         $user = $request->user();   // ✅ Intelephense reconoce Request::user()
 
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->is_admin || !$user->is_active) {
             abort(403, 'Solo administradores.');
         }
 

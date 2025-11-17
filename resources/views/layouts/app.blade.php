@@ -28,26 +28,51 @@
 
         {{-- MODO ADMIN / ENTRAR / SALIR (PASO 7) --}}
         @auth
-          @if(auth()->user()->is_admin)
-            <a href="{{ route('admin.dashboard') }}"
-               class="{{ request()->routeIs('admin.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
-              Admin
-            </a>
-          @endif
+          <div class="flex items-center gap-4">
+            <div class="text-right leading-tight">
+              <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
+              <div class="text-xs text-gray-500 flex items-center gap-2 justify-end">
+                <span>{{ auth()->user()->email }}</span>
+                @if(auth()->user()->is_admin)
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold {{ auth()->user()->is_master_admin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
+                    {{ auth()->user()->is_master_admin ? 'Admin master' : 'Admin usuario' }}
+                  </span>
+                @endif
+              </div>
+            </div>
 
-          <form method="POST" action="{{ route('logout') }}" class="inline">
-            @csrf
-            <button type="submit"
-                    class="text-gray-700 hover:text-gray-900">
-              Salir
-            </button>
-          </form>
+            @if(auth()->user()->is_admin)
+              <a href="{{ route('admin.dashboard') }}"
+                 class="{{ request()->routeIs('admin.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+                Admin
+              </a>
+              @if(auth()->user()->is_master_admin)
+                <a href="{{ route('admin.admins.index') }}"
+                   class="{{ request()->routeIs('admin.admins.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+                  Admins
+                </a>
+              @endif
+            @endif
+
+            <form method="POST" action="{{ route('logout') }}" class="inline">
+              @csrf
+              <button type="submit"
+                      class="text-gray-700 hover:text-gray-900">
+                Salir
+              </button>
+            </form>
+          </div>
         @else
-          <a href="{{ route('login') }}"
-             class="{{ request()->routeIs('login') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
-            Entrar
-          </a>
-        @endauth>
+          <div class="flex items-center gap-4">
+            <a href="{{ route('login') }}"
+               class="{{ request()->routeIs('login') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+              Entrar
+            </a>
+            <a href="{{ route('admin.login') }}" class="text-sm text-gray-500 hover:text-gray-700">
+              Acceso admin
+            </a>
+          </div>
+        @endauth
 
         {{-- Carrito --}}
         <a href="{{ route('cart.index') }}"
