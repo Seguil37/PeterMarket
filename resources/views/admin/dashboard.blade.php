@@ -26,6 +26,15 @@
       <div class="text-lg font-medium">Productos</div>
       <div class="text-sm text-gray-500">CRUD productos.</div>
     </a>
+
+    @if(auth()->user()->isMasterAdmin())
+      {{-- Gestión de administradores --}}
+      <a href="{{ route('admin.admins.index') }}"
+         class="block rounded-2xl border p-5 bg-white hover:shadow transition">
+        <div class="text-lg font-medium">Administradores</div>
+        <div class="text-sm text-gray-500">Crear, editar o desactivar cuentas de admin.</div>
+      </a>
+    @endif
   </div>
 </div>
 @endsection

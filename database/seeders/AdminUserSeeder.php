@@ -18,6 +18,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Admin',
                 'password' => Hash::make('clave-super-segura'), // cámbiala
                 'is_admin' => true,
+                'admin_role' => User::ROLE_MASTER,
             ]
         );
     }

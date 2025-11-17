@@ -59,10 +59,22 @@ class UserTest extends TestCase
 
     public function test_is_admin_funciona_como_booleano(): void
     {
-        $admin = User::factory()->create(['is_admin' => 1]);
-        $user  = User::factory()->create(['is_admin' => 0]);
+        $admin = User::factory()->create(['is_admin' => 1, 'admin_role' => User::ROLE_OPERATOR]);
+        $user  = User::factory()->create(['is_admin' => 0, 'admin_role' => null]);
 
         $this->assertTrue((bool) $admin->is_admin);
         $this->assertFalse((bool) $user->is_admin);
+    }
+
+    public function test_detecta_roles_de_admin_master_y_usuario(): void
+    {
+        $master = User::factory()->admin(User::ROLE_MASTER)->create();
+        $operator = User::factory()->admin(User::ROLE_OPERATOR)->create();
+
+        $this->assertTrue($master->isMasterAdmin());
+        $this->assertFalse($master->isOperatorAdmin());
+
+        $this->assertTrue($operator->isOperatorAdmin());
+        $this->assertFalse($operator->isMasterAdmin());
     }
 }

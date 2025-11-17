@@ -13,8 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Alias de middlewares de ruta
         $middleware->alias([
-            'auth'  => \Illuminate\Auth\Middleware\Authenticate::class,
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'auth'         => \Illuminate\Auth\Middleware\Authenticate::class,
+            'admin'        => \App\Http\Middleware\AdminMiddleware::class,
+            'admin.master' => \App\Http\Middleware\AdminMasterMiddleware::class,
         ]);
     })
     ->withExceptions(function ($exceptions) {

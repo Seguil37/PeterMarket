@@ -12,7 +12,7 @@ class AdminTest extends TestCase
 
     public function test_admin_puede_crear_un_producto()
     {
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->admin()->create();
         $this->actingAs($admin);
 
         $response = $this->post('/admin/products', [

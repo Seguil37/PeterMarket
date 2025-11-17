@@ -15,11 +15,15 @@ class User extends Authenticatable
     /**
      * Campos asignables en masa.
      */
+    public const ROLE_MASTER   = 'master';
+    public const ROLE_OPERATOR = 'operator';
+
     protected $fillable = [
         'name',
         'email',
         'password',
         'is_admin',
+        'admin_role',
     ];
 
     /**
@@ -39,6 +43,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
             'is_admin'          => 'boolean',
+            'admin_role'        => 'string',
         ];
     }
 
@@ -48,5 +53,15 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function isMasterAdmin(): bool
+    {
+        return $this->is_admin && $this->admin_role === self::ROLE_MASTER;
+    }
+
+    public function isOperatorAdmin(): bool
+    {
+        return $this->is_admin && $this->admin_role === self::ROLE_OPERATOR;
     }
 }

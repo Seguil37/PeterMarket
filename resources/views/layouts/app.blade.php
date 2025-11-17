@@ -28,26 +28,43 @@
 
         {{-- MODO ADMIN / ENTRAR / SALIR (PASO 7) --}}
         @auth
-          @if(auth()->user()->is_admin)
-            <a href="{{ route('admin.dashboard') }}"
-               class="{{ request()->routeIs('admin.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
-              Admin
-            </a>
-          @endif
+          <div class="flex items-center gap-4">
+            <div class="text-right leading-tight">
+              <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
+              <div class="text-xs text-gray-500">{{ auth()->user()->email }}</div>
+              @if(auth()->user()->is_admin)
+                <div class="text-[11px] font-semibold {{ auth()->user()->isMasterAdmin() ? 'text-indigo-600' : 'text-slate-500' }}">
+                  {{ auth()->user()->isMasterAdmin() ? 'Admin Master' : 'Admin Usuario' }}
+                </div>
+              @endif
+            </div>
 
-          <form method="POST" action="{{ route('logout') }}" class="inline">
-            @csrf
-            <button type="submit"
-                    class="text-gray-700 hover:text-gray-900">
-              Salir
-            </button>
-          </form>
+            @if(auth()->user()->is_admin)
+              <a href="{{ route('admin.dashboard') }}"
+                 class="{{ request()->routeIs('admin.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+                Admin
+              </a>
+            @endif
+
+            <form method="POST" action="{{ route('logout') }}" class="inline">
+              @csrf
+              <button type="submit"
+                      class="text-gray-700 hover:text-gray-900">
+                Salir
+              </button>
+            </form>
+          </div>
         @else
-          <a href="{{ route('login') }}"
-             class="{{ request()->routeIs('login') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
-            Entrar
-          </a>
-        @endauth>
+          <div class="flex items-center gap-4">
+            <a href="{{ route('login') }}"
+               class="{{ request()->routeIs('login') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+              Entrar
+            </a>
+            <a href="{{ route('admin.login') }}" class="text-sm text-gray-500 hover:text-gray-700">
+              Acceso admin
+            </a>
+          </div>
+        @endauth
 
         {{-- Carrito --}}
         <a href="{{ route('cart.index') }}"

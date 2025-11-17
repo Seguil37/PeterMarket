@@ -62,6 +62,9 @@
     <p class="mt-3 text-center">
       ¿No tienes cuenta? <a href="{{ route('register') }}" class="text-blue-600">Regístrate como cliente</a>
     </p>
+    <p class="mt-1 text-center text-sm text-gray-600">
+      ¿Eres administrador? <a href="{{ route('admin.login') }}" class="text-blue-600">Ir al login de admins</a>
+    </p>
   </div>
 </div>
 
