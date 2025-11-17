@@ -32,7 +32,10 @@ class AuthController extends Controller
             'password' => ['required','string'],
         ]);
 
-        if (Auth::attempt(array_merge($cred, ['is_admin' => false]), $request->boolean('remember'))) {
+        if (Auth::attempt(array_merge($cred, [
+            'is_admin'  => false,
+            'is_active' => true,
+        ]), $request->boolean('remember'))) {
             $request->session()->regenerate();
             return redirect()->intended(route('catalog.index'));
         }
@@ -64,7 +67,10 @@ class AuthController extends Controller
             'password' => ['required','string'],
         ]);
 
-        if (Auth::attempt(array_merge($cred, ['is_admin' => true]), $request->boolean('remember'))) {
+        if (Auth::attempt(array_merge($cred, [
+            'is_admin'  => true,
+            'is_active' => true,
+        ]), $request->boolean('remember'))) {
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
@@ -112,6 +118,7 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'is_admin' => false,
+            'is_active' => true,
         ]);
 
         Auth::login($user);
