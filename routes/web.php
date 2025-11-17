@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\InventoryController; // <- si usas el módulo de inventario nuevo
+use App\Http\Controllers\Admin\AdminUserController;
 
 /* =====================  CATÁLOGO (HOME)  ===================== */
 Route::get('/', function (Request $request) {
@@ -74,6 +75,11 @@ Route::middleware(['auth','admin'])
 
         // CRUD de productos
         Route::resource('products', AdminProductController::class);
+
+        // Gestión de administradores solo para Admin Master
+        Route::middleware('master')->group(function () {
+            Route::resource('admins', AdminUserController::class)->except(['show']);
+        });
     });
 
 /* ===== (Opcional) si quieres mantener tus rutas antiguas públicas de COMPRAS =====

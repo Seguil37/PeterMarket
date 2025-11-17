@@ -1,8 +1,6 @@
-@extends('layouts.app')
-@section('title','Inventario')
-
-@section('content')
-<div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+@extends('layouts.admin')
+@section('admin-content')
+<div class="space-y-8">
 
   <h1 class="text-2xl font-semibold">Inventario (entradas/salidas)</h1>
 
