@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Product;
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AuthController;
 
@@ -31,6 +32,8 @@ Route::get('/', function (Request $request) {
     $products = $query->paginate(12)->withQueryString();
     return view('welcome', compact('products','q','sort'));
 })->name('catalog.index');
+
+Route::get('/products/{product}', [CatalogController::class, 'show'])->name('catalog.show');
 
 /* =====================  CARRITO + CHECKOUT  ===================== */
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

@@ -52,6 +52,14 @@
             @endphp
             <span class="inline-block text-xs px-2 py-1 rounded {{ $badge }}">{{ $label }}</span>
 
+            <a href="{{ route('catalog.show', $product) }}"
+               class="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-lg border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              Ver más
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 0 1 1.414 0l5 5a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414-1.414L13.586 11H4a1 1 0 1 1 0-2h9.586l-3.293-3.293a1 1 0 0 1 0-1.414Z" clip-rule="evenodd" />
+              </svg>
+            </a>
+
             <form method="POST" action="{{ route('cart.add') }}" class="mt-3 flex items-center gap-2">
               @csrf
               <input type="hidden" name="product_id" value="{{ $product->id }}">
