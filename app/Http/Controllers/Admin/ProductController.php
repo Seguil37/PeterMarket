@@ -77,7 +77,9 @@ class ProductController extends Controller
             'price'       => ['required','numeric','min:0'],
             'stock'       => ['required','integer','min:0'],
             'image_url'   => ['nullable','url'],
-            'image_file'  => ['nullable','image','max:4096'],
+            'image_file'  => ['nullable','image','mimes:png','max:4096'],
+        ], [
+            'image_file.mimes' => 'La imagen debe estar en formato PNG.',
         ]);
 
         unset($data['image_file']);
