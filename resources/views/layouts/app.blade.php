@@ -16,7 +16,7 @@
       <nav class="flex items-center gap-6">
         {{-- Productos --}}
         <a href="{{ route('catalog.index') }}"
-           class="{{ request()->routeIs('catalog.index') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+           class="{{ request()->routeIs('catalog.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
           Productos
         </a>
 
