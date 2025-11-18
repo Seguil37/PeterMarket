@@ -1,5 +1,10 @@
 @php($p = $product ?? null)
 @php($usesUploadedImage = $p?->hasUploadedImage())
+@php($initialPreview = old('image_url', $p->image_url ?? null))
+@php($hasPreview = filled($initialPreview))
+@php($previewMessage = $p && $p->image_url
+    ? ($usesUploadedImage ? 'Imagen actual (subida previamente).' : 'Imagen actual (desde enlace).')
+    : 'Vista previa de la imagen seleccionada.')
 <form method="POST" action="{{ $route }}" class="grid gap-4 max-w-xl" enctype="multipart/form-data">
   @csrf
   @if($method !== 'POST') @method($method) @endif
@@ -40,30 +45,37 @@
       @error('image_url') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
     </div>
 
-    <div>
-      <label class="block text-sm font-medium">Subir imagen</label>
-      <input type="file" name="image_file" accept="image/*" class="w-full border rounded px-3 py-2 bg-white">
-      <p class="text-xs text-gray-500">Formatos permitidos: JPG, PNG, WEBP (máx. 4MB).</p>
-      @error('image_file') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
-    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-sm font-medium">Subir imagen</label>
+        <input type="file" name="image_file" accept="image/png" data-image-input class="w-full border rounded px-3 py-2 bg-white">
+        <p class="text-xs text-gray-500">Solo se permiten imágenes PNG (máx. 4MB).</p>
+        @error('image_file') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+      </div>
 
-    @if($p && $p->image_url)
-      <div class="flex items-center gap-4 p-3 border rounded bg-gray-50">
-        <img src="{{ $p->image_url }}" alt="{{ $p->name }}" class="w-24 h-24 object-cover rounded">
+      <div id="previewContainer"
+           class="flex items-center gap-4 p-3 border rounded bg-gray-50 {{ $hasPreview ? '' : 'hidden' }}">
+        <img id="previewImagen"
+             data-initial-src="{{ $hasPreview ? $initialPreview : '' }}"
+             src="{{ $hasPreview ? $initialPreview : '' }}"
+             alt="Vista previa de la imagen"
+             class="w-24 h-24 object-cover rounded border">
         <div class="text-sm text-gray-600">
-          <p class="font-semibold text-gray-900">Imagen actual</p>
+          <p class="font-semibold text-gray-900" id="previewCaption" data-initial-text="{{ $previewMessage }}">{{ $previewMessage }}</p>
           @if($usesUploadedImage)
-            <p>Actualmente este producto usa una imagen subida. Deja los campos como están si deseas conservarla.</p>
+            <p>Actualmente este producto usa una imagen subida. Puedes seleccionar otra y se actualizará la vista previa.</p>
+          @elseif($p && $p->image_url)
+            <p>Imagen cargada desde enlace. Selecciona un archivo PNG para reemplazarla.</p>
           @else
-            <p>Imagen cargada desde enlace.</p>
+            <p>La vista previa se mostrará automáticamente al elegir un archivo.</p>
           @endif
         </div>
       </div>
-    @endif
-  </div>
 
-  <div class="flex gap-2">
-    <button class="bg-black text-white px-4 py-2 rounded">Guardar</button>
-    <a href="{{ route('admin.products.index') }}" class="px-4 py-2 border rounded">Cancelar</a>
+      <div class="flex flex-wrap gap-3">
+        <button type="submit" id="btnCargarImagen" class="bg-black text-white px-4 py-2 rounded">Cargar imagen</button>
+        <a href="{{ route('admin.products.index') }}" class="px-4 py-2 border rounded">Cancelar</a>
+      </div>
+    </div>
   </div>
 </form>
