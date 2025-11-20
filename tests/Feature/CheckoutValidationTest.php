@@ -12,7 +12,10 @@ class CheckoutValidationTest extends TestCase
         $response = $this->post(route('checkout.process'), [
             'customer_name'    => '',
             'customer_email'   => 'correo_invalido',
-            'customer_address' => 123, // no es string
+            'shipping_address' => '', // requerido
+            'shipping_city'    => '',
+            'shipping_reference' => '',
+            'shipping_type'    => 'vip', // no permitido
             'payment_method'   => 'bitcoin', // no permitido
         ]);
 
@@ -20,7 +23,10 @@ class CheckoutValidationTest extends TestCase
         $response->assertSessionHasErrors([
             'customer_name',
             'customer_email',
-            'customer_address',
+            'shipping_address',
+            'shipping_city',
+            'shipping_reference',
+            'shipping_type',
             'payment_method',
         ]);
     }
@@ -31,7 +37,10 @@ class CheckoutValidationTest extends TestCase
         $response = $this->post(route('checkout.process'), [
             'customer_name'    => 'Cliente Demo',
             'customer_email'   => 'demo@example.com',
-            'customer_address' => 'Av. Siempre Viva 123',
+            'shipping_address' => 'Av. Siempre Viva 123',
+            'shipping_city'    => 'Springfield',
+            'shipping_reference' => 'Casa azul, portón negro',
+            'shipping_type'    => 'standard',
             'payment_method'   => 'simulated',
         ]);
 

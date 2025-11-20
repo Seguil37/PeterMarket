@@ -14,10 +14,20 @@
     </div>
 
     <div class="bg-white rounded border p-4 mb-4">
+      <h2 class="font-semibold mb-2">Datos de entrega</h2>
+      <p><strong>Dirección:</strong> {{ $order->shipping_address }}</p>
+      <p><strong>Ciudad / distrito:</strong> {{ $order->shipping_city }}</p>
+      <p><strong>Referencia:</strong> {{ $order->shipping_reference }}</p>
+      <p><strong>Tipo de envío:</strong> {{ $shippingOptions[$order->shipping_type]['label'] ?? $order->shipping_type }}</p>
+      <p><strong>Costo de delivery:</strong> S/ {{ number_format($order->shipping_cost,2) }}</p>
+    </div>
+
+    <div class="bg-white rounded border p-4 mb-4">
       <h2 class="font-semibold mb-3">Productos</h2>
       <table class="w-full text-sm">
         <thead><tr class="border-b">
           <th class="text-left py-2">Producto</th>
+          <th class="text-left">Categoría</th>
           <th>Cant.</th>
           <th>Precio</th>
           <th>Total</th>
@@ -26,6 +36,7 @@
           @foreach($order->items as $it)
           <tr class="border-b">
             <td class="py-2">{{ $it->name }}</td>
+            <td class="py-2">{{ $it->category_type }}</td>
             <td class="text-center">{{ $it->quantity }}</td>
             <td class="text-center">S/ {{ number_format($it->price,2) }}</td>
             <td class="text-right">S/ {{ number_format($it->line_total,2) }}</td>
@@ -38,6 +49,7 @@
     <div class="bg-white rounded border p-4">
       <div class="flex justify-between"><span>Subtotal</span><strong>S/ {{ number_format($order->subtotal,2) }}</strong></div>
       <div class="flex justify-between"><span>IGV</span><strong>S/ {{ number_format($order->tax,2) }}</strong></div>
+      <div class="flex justify-between"><span>Delivery</span><strong>S/ {{ number_format($order->shipping_cost,2) }}</strong></div>
       <div class="flex justify-between text-lg mt-2 border-t pt-2"><span>Total</span><strong>S/ {{ number_format($order->total,2) }}</strong></div>
     </div>
 

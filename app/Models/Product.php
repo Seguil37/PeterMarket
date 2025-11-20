@@ -10,9 +10,26 @@ class Product extends Model
 {
     use HasFactory;
 
+    /**
+     * Tipos de categoría disponibles en el catálogo.
+     */
+    public const CATEGORY_TYPES = [
+        'Lácteos',
+        'Abarrotes',
+        'Bebidas',
+        'Limpieza',
+        'Higiene personal',
+        'Snacks',
+        'Congelados',
+        'Frutas y verduras',
+        'Carnes y embutidos',
+        'Panadería',
+    ];
+
     // Campos que se pueden asignar en masa
     protected $fillable = [
         'name',
+        'category_type',
         'description',
         'price',
         'stock',

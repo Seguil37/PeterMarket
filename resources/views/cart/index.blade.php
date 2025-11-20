@@ -2,7 +2,7 @@
 @section('title','Carrito de compras')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 py-6" x-data="cartPage()">
+<div class="max-w-5xl mx-auto px-4 py-6" x-data="cartPage({{ json_encode($shippingOptions) }}, '{{ $shippingType }}', {{ $shippingCost }})">
   <header class="flex items-center justify-between mb-4">
     <h1 class="text-2xl font-bold">Carrito de compras</h1>
     <a href="{{ route('catalog.index') }}" class="text-blue-600 underline">Seguir comprando</a>
@@ -62,6 +62,7 @@
         <dl class="space-y-2">
           <div class="flex justify-between"><dt>Subtotal</dt><dd>S/ <span x-text="formatMoney(totals.subtotal)">{{ number_format($subtotal,2) }}</span></dd></div>
           <div class="flex justify-between"><dt>IGV (18%)</dt><dd>S/ <span x-text="formatMoney(totals.iva)">{{ number_format($iva,2) }}</span></dd></div>
+          <div class="flex justify-between"><dt>Delivery</dt><dd>S/ <span x-text="formatMoney(totals.shipping)">{{ number_format($shippingCost,2) }}</span></dd></div>
           <div class="flex justify-between font-bold text-lg pt-2 border-t"><dt>Total</dt><dd>S/ <span x-text="formatMoney(totals.total)">{{ number_format($total,2) }}</span></dd></div>
         </dl>
 
@@ -70,15 +71,35 @@
           @csrf
           <div>
             <label class="text-sm block mb-1">Nombre y apellido</label>
-            <input name="customer_name" required class="w-full border rounded px-3 py-2">
+            <input name="customer_name" value="{{ old('customer_name') }}" required class="w-full border rounded px-3 py-2">
           </div>
           <div>
             <label class="text-sm block mb-1">Correo</label>
-            <input type="email" name="customer_email" required class="w-full border rounded px-3 py-2">
+            <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="w-full border rounded px-3 py-2">
+          </div>
+          <div class="space-y-3">
+            <div>
+              <label class="text-sm block mb-1">Dirección completa</label>
+              <input name="shipping_address" value="{{ old('shipping_address') }}" required class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+              <label class="text-sm block mb-1">Ciudad / distrito</label>
+              <input name="shipping_city" value="{{ old('shipping_city') }}" required class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+              <label class="text-sm block mb-1">Referencia de domicilio</label>
+              <input name="shipping_reference" value="{{ old('shipping_reference') }}" required class="w-full border rounded px-3 py-2">
+            </div>
           </div>
           <div>
-            <label class="text-sm block mb-1">Dirección (opcional)</label>
-            <input name="customer_address" class="w-full border rounded px-3 py-2">
+            <label class="text-sm block mb-1">Tipo de envío</label>
+            <select name="shipping_type" @change="changeShipping($event.target.value)" class="w-full border rounded px-3 py-2">
+              @foreach($shippingOptions as $key => $option)
+                <option value="{{ $key }}" @selected(old('shipping_type', $shippingType) === $key) data-cost="{{ $option['cost'] }}">
+                  {{ $option['label'] }} - S/ {{ number_format($option['cost'],2) }}
+                </option>
+              @endforeach
+            </select>
           </div>
           <fieldset>
             <legend class="text-sm mb-1">Método de pago</legend>
@@ -110,13 +131,21 @@
   {{-- Alpine para el comportamiento del carrito --}}
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
-  function cartPage() {
+  function cartPage(shippingOptions, initialType, shippingCost) {
     return {
+      shippingOptions,
+      shippingType: initialType,
       quantities: {},
-      totals: { subtotal: {{ $subtotal }}, iva: {{ $iva }}, total: {{ $total }} },
+      totals: { subtotal: {{ $subtotal }}, iva: {{ $iva }}, shipping: shippingCost, total: {{ $total }} },
       formatMoney(v){ return Number(v).toFixed(2); },
       increment(id, stock){ const c = Number(this.quantities[id] ?? 1); this.updateQty(id, Math.min(c+1, stock)); },
       decrement(id){ const c = Number(this.quantities[id] ?? 1); this.updateQty(id, Math.max(c-1, 0)); },
+      changeShipping(type){
+        this.shippingType = type;
+        const option = this.shippingOptions?.[type];
+        this.totals.shipping = Number(option?.cost ?? 0);
+        this.totals.total = +((this.totals.subtotal + this.totals.iva + this.totals.shipping).toFixed(2));
+      },
       updateQty(id, qty){
         qty = Number(qty); this.quantities = { ...this.quantities, [id]: qty };
         fetch(`/cart/${id}`, {
@@ -133,7 +162,7 @@
           });
           this.totals.subtotal = +subtotal.toFixed(2);
           this.totals.iva = +( (subtotal*0.18).toFixed(2) );
-          this.totals.total = +( (this.totals.subtotal + this.totals.iva).toFixed(2) );
+          this.totals.total = +( (this.totals.subtotal + this.totals.iva + this.totals.shipping).toFixed(2) );
         }).catch(()=>{});
       }
     }

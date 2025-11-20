@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Support\Delivery;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -15,8 +16,12 @@ class CartController extends Controller
         $cart = $this->cart();
         $subtotal = collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']);
         $iva = round($subtotal * 0.18, 2);
-        $total = round($subtotal + $iva, 2);
-        return view('cart.index', compact('cart','subtotal','iva','total'));
+        $shippingOptions = Delivery::options();
+        $shippingType = session()->getOldInput('shipping_type', array_key_first($shippingOptions));
+        $shippingCost = $shippingOptions[$shippingType]['cost'] ?? ($shippingOptions[array_key_first($shippingOptions)]['cost'] ?? 0);
+        $total = round($subtotal + $iva + $shippingCost, 2);
+
+        return view('cart.index', compact('cart','subtotal','iva','total','shippingOptions','shippingType','shippingCost'));
     }
 
     public function add(Request $request)
@@ -26,7 +31,7 @@ class CartController extends Controller
             'quantity'   => ['nullable','integer','min:1'],
         ]);
 
-        $product = Product::select('id','name','price','image_url','stock')->findOrFail($data['product_id']);
+        $product = Product::select('id','name','price','image_url','stock','category_type')->findOrFail($data['product_id']);
         $qty = max(1, (int)($data['quantity'] ?? 1));
 
         if ($qty > $product->stock) {
@@ -38,8 +43,13 @@ class CartController extends Controller
             $cart[$product->id]['quantity'] = min($cart[$product->id]['quantity'] + $qty, $product->stock);
         } else {
             $cart[$product->id] = [
-                'id'=>$product->id,'name'=>$product->name,'price'=>(float)$product->price,
-                'image'=>$product->image_url,'quantity'=>$qty,'stock'=>$product->stock
+                'id'=>$product->id,
+                'name'=>$product->name,
+                'price'=>(float)$product->price,
+                'image'=>$product->image_url,
+                'quantity'=>$qty,
+                'stock'=>$product->stock,
+                'category_type'=>$product->category_type,
             ];
         }
         $this->saveCart($cart);

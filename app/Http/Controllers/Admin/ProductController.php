@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -18,7 +19,11 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products'));
     }
 
-    public function create() { return view('admin.products.create'); }
+    public function create()
+    {
+        $categories = Product::CATEGORY_TYPES;
+        return view('admin.products.create', compact('categories'));
+    }
 
     public function store(Request $request)
     {
@@ -34,7 +39,11 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('ok','Producto creado.');
     }
 
-    public function edit(Product $product) { return view('admin.products.edit', compact('product')); }
+    public function edit(Product $product)
+    {
+        $categories = Product::CATEGORY_TYPES;
+        return view('admin.products.edit', compact('product','categories'));
+    }
 
     public function update(Request $request, Product $product)
     {
@@ -73,6 +82,7 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'name'        => ['required','string','max:255'],
+            'category_type' => ['required','string', Rule::in(Product::CATEGORY_TYPES)],
             'description' => ['nullable','string'],
             'price'       => ['required','numeric','min:0'],
             'stock'       => ['required','integer','min:0'],

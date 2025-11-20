@@ -5,6 +5,7 @@
 @php($previewMessage = $p && $p->image_url
     ? ($usesUploadedImage ? 'Imagen actual (subida previamente).' : 'Imagen actual (desde enlace).')
     : 'Vista previa de la imagen seleccionada.')
+@php($categoryOptions = $categories ?? \App\Models\Product::CATEGORY_TYPES)
 <form method="POST" action="{{ $route }}" class="grid gap-4 max-w-xl" enctype="multipart/form-data">
   @csrf
   @if($method !== 'POST') @method($method) @endif
@@ -13,6 +14,17 @@
     <label class="block text-sm mb-1">Nombre</label>
     <input name="name" value="{{ old('name', $p->name ?? '') }}" class="w-full border rounded px-3 py-2">
     @error('name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+  </div>
+
+  <div>
+    <label class="block text-sm mb-1">Tipo de categoría</label>
+    <select name="category_type" class="w-full border rounded px-3 py-2" required>
+      <option value="">Selecciona una categoría</option>
+      @foreach($categoryOptions as $option)
+        <option value="{{ $option }}" @selected(old('category_type', $p->category_type ?? '') === $option)>{{ $option }}</option>
+      @endforeach
+    </select>
+    @error('category_type') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
   </div>
 
   <div>
