@@ -73,7 +73,7 @@
         </dl>
 
         {{-- Formulario de pago --}}
-        <form method="POST" action="{{ route('checkout.process') }}" class="mt-4 space-y-3">
+        <form method="POST" action="{{ route('checkout.process') }}" class="mt-4 space-y-3" x-ref="checkoutForm" @submit.prevent="handleCheckout">
           @csrf
           <div>
             <label class="text-sm block mb-1">Nombre y apellido</label>
@@ -125,6 +125,7 @@
           <button class="w-full px-4 py-2 rounded bg-emerald-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!deliveryEvaluation.available">
             @{{ deliveryEvaluation.available ? 'Pagar ahora' : 'Aumenta tu pedido' }}
           </button>
+          <p class="text-sm text-red-600" x-show="checkoutError" x-text="checkoutError"></p>
           <p class="text-xs text-gray-500 text-center">Compra segura • datos validados • stock garantizado</p>
         </form>
       </aside>
@@ -144,6 +145,7 @@
       deliverySettings,
       deliveryEvaluation,
       quantities: {},
+      checkoutError: '',
       totals: { subtotal: {{ $subtotal }}, iva: {{ $iva }}, shipping: shippingCost, total: {{ $total }} },
       formatMoney(v){ return Number(v).toFixed(2); },
       computeShipping(subtotal){
@@ -184,6 +186,15 @@
           this.totals.iva = +( (subtotal*0.18).toFixed(2) );
           this.refreshTotals();
         }).catch(()=>{});
+      },
+      // Validamos disponibilidad del delivery antes de procesar el pago
+      handleCheckout(){
+        if (!this.deliveryEvaluation.available) {
+          this.checkoutError = 'El monto mínimo para delivery es S/ 35. Aumenta tu pedido para continuar.';
+          return;
+        }
+        this.checkoutError = '';
+        this.$refs.checkoutForm.submit();
       }
     }
   }
