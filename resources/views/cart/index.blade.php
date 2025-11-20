@@ -122,8 +122,9 @@
               <span>Tarjeta (pronto)</span>
             </label>
           </fieldset>
-          <button class="w-full px-4 py-2 rounded bg-emerald-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!deliveryEvaluation.available">
-            @{{ deliveryEvaluation.available ? 'Pagar ahora' : 'Aumenta tu pedido' }}
+          <button class="w-full px-4 py-2 rounded bg-emerald-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="!deliveryEvaluation.available"
+            x-text="deliveryEvaluation.available ? 'Pagar ahora' : 'Aumenta tu pedido'">
           </button>
           <p class="text-xs text-gray-500 text-center">Compra segura • datos validados • stock garantizado</p>
         </form>
