@@ -19,6 +19,7 @@
         <div>
           <p class="text-sm text-gray-500 uppercase tracking-wide">Producto</p>
           <h1 class="text-3xl font-semibold text-gray-900">{{ $product->name }}</h1>
+          <p class="text-sm text-gray-600">Categoría: {{ $product->category_type }}</p>
         </div>
 
         <div class="text-4xl font-bold text-emerald-600">

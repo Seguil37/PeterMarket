@@ -21,7 +21,7 @@ Route::get('/', function (Request $request) {
     $q    = trim((string) $request->query('q', ''));
     $sort = (string) $request->query('sort', 'name_asc');
 
-    $query = Product::select('id','name','price','image_url','stock');
+    $query = Product::select('id','name','price','image_url','stock','category_type');
     if ($q !== '') $query->where('name','like',"%{$q}%");
 
     $query->when($sort === 'price_asc',  fn($q) => $q->orderBy('price'))

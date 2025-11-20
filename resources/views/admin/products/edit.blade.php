@@ -4,6 +4,7 @@
   @include('admin.products._form', [
     'route' => route('admin.products.update',$product),
     'method' => 'PUT',
-    'product' => $product
+    'product' => $product,
+    'categories' => $categories ?? []
   ])
 @endsection

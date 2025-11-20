@@ -43,6 +43,7 @@
                class="w-full h-44 object-cover rounded-t-xl">
           <div class="p-4 space-y-2">
             <h2 class="font-semibold">{{ $product->name }}</h2>
+            <p class="text-xs text-gray-500">Categoría: {{ $product->category_type }}</p>
             <div class="text-sm text-gray-600">S/ {{ number_format($product->price, 2) }}</div>
 
             @php

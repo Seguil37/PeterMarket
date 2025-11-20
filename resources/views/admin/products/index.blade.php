@@ -14,6 +14,7 @@
       <tr class="bg-gray-50">
         <th class="p-2 border">ID</th>
         <th class="p-2 border">Nombre</th>
+        <th class="p-2 border">Categoría</th>
         <th class="p-2 border">Precio</th>
         <th class="p-2 border">Stock</th>
         <th class="p-2 border">Img</th>
@@ -25,6 +26,7 @@
       <tr>
         <td class="p-2 border">{{ $p->id }}</td>
         <td class="p-2 border">{{ $p->name }}</td>
+        <td class="p-2 border">{{ $p->category_type }}</td>
         <td class="p-2 border">S/ {{ number_format($p->price,2) }}</td>
         <td class="p-2 border">{{ $p->stock }}</td>
         <td class="p-2 border">@if($p->image_url)<img src="{{ $p->image_url }}" class="h-10 w-10 object-cover rounded">@endif</td>
