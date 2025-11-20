@@ -5,12 +5,21 @@
   <header class="border-b bg-gray-50/60">
     <form method="GET" action="{{ route('catalog.index') }}"
           class="max-w-7xl mx-auto px-4 py-4 grid grid-cols-1 md:grid-cols-12 gap-3">
-      <div class="md:col-span-7">
+      <div class="md:col-span-5">
         <label class="sr-only" for="q">Buscar</label>
         <input id="q" name="q" value="{{ $q ?? '' }}" placeholder="Buscar producto…"
                class="w-full border rounded-lg px-3 py-2" />
       </div>
       <div class="md:col-span-3">
+        <label class="sr-only" for="category">Categoría</label>
+        <select id="category" name="category" class="w-full border rounded-lg px-3 py-2">
+          <option value="" @selected(($category ?? '')==='')>Todas las categorías</option>
+          @foreach($categories as $option)
+            <option value="{{ $option }}" @selected(($category ?? '')===$option)>{{ $option }}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="md:col-span-2">
         <label class="sr-only" for="sort">Ordenar por</label>
         <select id="sort" name="sort" class="w-full border rounded-lg px-3 py-2">
           <option value="name_asc"  @selected(($sort ?? '')==='name_asc')>Nombre (A–Z)</option>
@@ -21,7 +30,7 @@
       </div>
       <div class="md:col-span-2 flex gap-2">
         <button class="flex-1 px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-black">Aplicar</button>
-        @if(($q ?? '') !== '' || ($sort ?? '') !== 'name_asc')
+        @if(($q ?? '') !== '' || ($sort ?? '') !== 'name_asc' || ($category ?? '') !== '')
           <a href="{{ route('catalog.index') }}" class="px-4 py-2 rounded-lg border">Limpiar</a>
         @endif
       </div>
