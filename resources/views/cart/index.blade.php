@@ -2,7 +2,7 @@
 @section('title','Carrito de compras')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 py-6" x-data="cartPage({{ json_encode($shippingOptions) }}, '{{ $shippingType }}', {{ $shippingCost }})">
+<div class="max-w-5xl mx-auto px-4 py-6" x-data="cartPage({{ json_encode($shippingOptions) }}, '{{ $shippingType }}', {{ $shippingCost }}, {{ json_encode($deliverySettings) }}, {{ json_encode($deliveryEvaluation) }})">
   <header class="flex items-center justify-between mb-4">
     <h1 class="text-2xl font-bold">Carrito de compras</h1>
     <a href="{{ route('catalog.index') }}" class="text-blue-600 underline">Seguir comprando</a>
@@ -59,10 +59,16 @@
 
       <aside class="border rounded p-4 h-fit bg-white">
         <h3 class="text-lg font-semibold mb-3">Resumen</h3>
+        <template x-if="!deliveryEvaluation.available">
+          <div class="mb-3 p-3 rounded bg-amber-100 text-amber-800 text-sm" x-text="deliveryEvaluation.message"></div>
+        </template>
         <dl class="space-y-2">
           <div class="flex justify-between"><dt>Subtotal</dt><dd>S/ <span x-text="formatMoney(totals.subtotal)">{{ number_format($subtotal,2) }}</span></dd></div>
           <div class="flex justify-between"><dt>IGV (18%)</dt><dd>S/ <span x-text="formatMoney(totals.iva)">{{ number_format($iva,2) }}</span></dd></div>
-          <div class="flex justify-between"><dt>Delivery</dt><dd>S/ <span x-text="formatMoney(totals.shipping)">{{ number_format($shippingCost,2) }}</span></dd></div>
+          <div class="flex justify-between"><dt>Delivery</dt><dd class="text-right">
+            <div>S/ <span x-text="formatMoney(totals.shipping)">{{ number_format($shippingCost,2) }}</span></div>
+            <div class="text-xs text-gray-500" x-text="deliveryEvaluation.message"></div>
+          </dd></div>
           <div class="flex justify-between font-bold text-lg pt-2 border-t"><dt>Total</dt><dd>S/ <span x-text="formatMoney(totals.total)">{{ number_format($total,2) }}</span></dd></div>
         </dl>
 
@@ -116,8 +122,8 @@
               <span>Tarjeta (pronto)</span>
             </label>
           </fieldset>
-          <button class="w-full px-4 py-2 rounded bg-emerald-600 text-white font-semibold">
-            Pagar ahora
+          <button class="w-full px-4 py-2 rounded bg-emerald-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!deliveryEvaluation.available">
+            @{{ deliveryEvaluation.available ? 'Pagar ahora' : 'Aumenta tu pedido' }}
           </button>
           <p class="text-xs text-gray-500 text-center">Compra segura • datos validados • stock garantizado</p>
         </form>
@@ -131,20 +137,34 @@
   {{-- Alpine para el comportamiento del carrito --}}
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
-  function cartPage(shippingOptions, initialType, shippingCost) {
+  function cartPage(shippingOptions, initialType, shippingCost, deliverySettings, deliveryEvaluation) {
     return {
       shippingOptions,
       shippingType: initialType,
+      deliverySettings,
+      deliveryEvaluation,
       quantities: {},
       totals: { subtotal: {{ $subtotal }}, iva: {{ $iva }}, shipping: shippingCost, total: {{ $total }} },
       formatMoney(v){ return Number(v).toFixed(2); },
+      computeShipping(subtotal){
+        if (subtotal < this.deliverySettings.min_total) {
+          return { available: false, cost: 0, message: 'El monto mínimo para delivery es S/ 35. Aumenta tu pedido o cambia a recojo en tienda.' };
+        }
+        if (subtotal >= this.deliverySettings.free_from) {
+          return { available: true, cost: 0, message: '¡Felicidades! Obtuviste delivery gratis 🎉' };
+        }
+        return { available: true, cost: this.deliverySettings.base_cost, message: 'Agrega un poco más a tu pedido para obtener delivery gratis ✨ (gratis desde S/ 45)' };
+      },
+      refreshTotals(){
+        this.deliveryEvaluation = this.computeShipping(this.totals.subtotal);
+        this.totals.shipping = this.deliveryEvaluation.available ? this.deliveryEvaluation.cost : 0;
+        this.totals.total = +((this.totals.subtotal + this.totals.iva + this.totals.shipping).toFixed(2));
+      },
       increment(id, stock){ const c = Number(this.quantities[id] ?? 1); this.updateQty(id, Math.min(c+1, stock)); },
       decrement(id){ const c = Number(this.quantities[id] ?? 1); this.updateQty(id, Math.max(c-1, 0)); },
       changeShipping(type){
         this.shippingType = type;
-        const option = this.shippingOptions?.[type];
-        this.totals.shipping = Number(option?.cost ?? 0);
-        this.totals.total = +((this.totals.subtotal + this.totals.iva + this.totals.shipping).toFixed(2));
+        this.refreshTotals();
       },
       updateQty(id, qty){
         qty = Number(qty); this.quantities = { ...this.quantities, [id]: qty };
@@ -162,7 +182,7 @@
           });
           this.totals.subtotal = +subtotal.toFixed(2);
           this.totals.iva = +( (subtotal*0.18).toFixed(2) );
-          this.totals.total = +( (this.totals.subtotal + this.totals.iva + this.totals.shipping).toFixed(2) );
+          this.refreshTotals();
         }).catch(()=>{});
       }
     }

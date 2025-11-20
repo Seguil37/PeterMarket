@@ -31,10 +31,14 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->withErrors(['cart'=>'Tu carrito está vacío.']);
         }
 
-        $shippingOptions = Delivery::options();
-        $shippingCost = $shippingOptions[$data['shipping_type']]['cost'] ?? 0;
-
         $subtotal = collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']);
+        $deliveryEvaluation = Delivery::evaluate($subtotal);
+        if (!$deliveryEvaluation['available']) {
+            return back()->withErrors(['shipping_type' => $deliveryEvaluation['message']])->withInput();
+        }
+
+        $shippingOptions = Delivery::options($deliveryEvaluation['cost']);
+        $shippingCost = $deliveryEvaluation['cost'];
         $tax = round($subtotal * 0.18, 2);
         $total = round($subtotal + $tax + $shippingCost, 2);
 
@@ -95,8 +99,9 @@ class CheckoutController extends Controller
     public function success(Order $order)
     {
         $order->load('items');
-        $shippingOptions = Delivery::options();
+        $shippingOptions = Delivery::options($order->shipping_cost);
+        $deliveryEvaluation = Delivery::evaluate($order->subtotal);
 
-        return view('checkout.success', compact('order','shippingOptions'));
+        return view('checkout.success', compact('order','shippingOptions','deliveryEvaluation'));
     }
 }
