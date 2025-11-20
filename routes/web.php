@@ -20,9 +20,11 @@ use App\Http\Controllers\Admin\AdminUserController;
 Route::get('/', function (Request $request) {
     $q    = trim((string) $request->query('q', ''));
     $sort = (string) $request->query('sort', 'name_asc');
+    $category = trim((string) $request->query('category', ''));
 
     $query = Product::select('id','name','price','image_url','stock','category_type');
     if ($q !== '') $query->where('name','like',"%{$q}%");
+    if ($category !== '') $query->where('category_type', $category);
 
     $query->when($sort === 'price_asc',  fn($q) => $q->orderBy('price'))
           ->when($sort === 'price_desc', fn($q) => $q->orderBy('price','desc'))
@@ -30,7 +32,9 @@ Route::get('/', function (Request $request) {
           ->when(!in_array($sort,['price_asc','price_desc','stock_desc']), fn($q) => $q->orderBy('name'));
 
     $products = $query->paginate(12)->withQueryString();
-    return view('welcome', compact('products','q','sort'));
+    $categories = Product::select('category_type')->distinct()->orderBy('category_type')->pluck('category_type');
+
+    return view('welcome', compact('products','q','sort','categories','category'));
 })->name('catalog.index');
 
 Route::get('/products/{product}', [CatalogController::class, 'show'])->name('catalog.show');
