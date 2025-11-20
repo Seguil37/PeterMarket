@@ -47,10 +47,62 @@
     </div>
 
     <div class="bg-white rounded border p-4">
-      <div class="flex justify-between"><span>Subtotal</span><strong>S/ {{ number_format($order->subtotal,2) }}</strong></div>
-      <div class="flex justify-between"><span>IGV</span><strong>S/ {{ number_format($order->tax,2) }}</strong></div>
-      <div class="flex justify-between"><span>Delivery</span><strong>S/ {{ number_format($order->shipping_cost,2) }}</strong></div>
-      <div class="flex justify-between text-lg mt-2 border-t pt-2"><span>Total</span><strong>S/ {{ number_format($order->total,2) }}</strong></div>
+      <h2 class="font-semibold mb-3">Resumen de pago</h2>
+      <div class="flex justify-between"><span>Subtotal productos:</span><strong>S/ {{ number_format($order->subtotal,2) }}</strong></div>
+      <div class="flex justify-between"><span>Costo delivery:</span><strong>S/ {{ number_format($order->shipping_cost,2) }}</strong></div>
+      <div class="flex justify-between text-lg mt-2 border-t pt-2"><span>Total final:</span><strong>S/ {{ number_format($order->total,2) }}</strong></div>
+      <p class="text-xs text-gray-500 mt-1">Incluye IGV: S/ {{ number_format($order->tax,2) }}</p>
+
+      <div class="mt-3 p-3 rounded bg-gray-50 border text-sm">
+        <p class="font-semibold mb-1">{{ $deliveryEvaluation['message'] }}</p>
+        @if($order->subtotal < \App\Support\Delivery::MIN_TOTAL)
+          <p class="text-amber-700">El monto mínimo para delivery es S/ 35. Aumenta tu pedido o cambia a recojo en tienda.</p>
+        @endif
+      </div>
+
+      <div class="mt-4 text-sm space-y-1 bg-emerald-50 border border-emerald-100 p-3 rounded">
+        <p class="font-semibold">Información de referencia</p>
+        <p>📍 Punto de origen del delivery: Jr. Espinar y Progreso – Cusco</p>
+        <p>⏱ Tiempo estimado de entrega: 5 a 30 minutos según zona</p>
+        <p>💬 Regla: Delivery gratis desde S/ 45</p>
+      </div>
+
+      <div class="mt-4">
+        <p class="font-semibold mb-2 text-sm">Referencias por zona</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="text-left p-2 border">Zona de envío</th>
+                <th class="text-left p-2 border">Tiempo aprox</th>
+                <th class="text-left p-2 border">Costo estimado para ti</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="p-2 border">Centro histórico</td>
+                <td class="p-2 border">5–8 min</td>
+                <td class="p-2 border">S/ 5–6</td>
+              </tr>
+              <tr class="bg-gray-50">
+                <td class="p-2 border">Wanchaq / Av. La Cultura</td>
+                <td class="p-2 border">10–15 min</td>
+                <td class="p-2 border">S/ 6–8</td>
+              </tr>
+              <tr>
+                <td class="p-2 border">Magisterio / Marcavalle</td>
+                <td class="p-2 border">15–20 min</td>
+                <td class="p-2 border">S/ 8–10</td>
+              </tr>
+              <tr class="bg-gray-50">
+                <td class="p-2 border">San Sebastián / San Jerónimo</td>
+                <td class="p-2 border">20–30 min</td>
+                <td class="p-2 border">S/ 10–15</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <a href="{{ route('catalog.index') }}" class="inline-block mt-6 px-4 py-2 rounded bg-blue-600 text-white">Volver al catálogo</a>

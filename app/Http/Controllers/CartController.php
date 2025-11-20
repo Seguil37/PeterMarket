@@ -16,12 +16,14 @@ class CartController extends Controller
         $cart = $this->cart();
         $subtotal = collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']);
         $iva = round($subtotal * 0.18, 2);
-        $shippingOptions = Delivery::options();
+        $deliveryEvaluation = Delivery::evaluate($subtotal);
+        $shippingOptions = Delivery::options($deliveryEvaluation['cost']);
         $shippingType = session()->getOldInput('shipping_type', array_key_first($shippingOptions));
-        $shippingCost = $shippingOptions[$shippingType]['cost'] ?? ($shippingOptions[array_key_first($shippingOptions)]['cost'] ?? 0);
-        $total = round($subtotal + $iva + $shippingCost, 2);
+        $shippingCost = $deliveryEvaluation['cost'];
+        $total = round($subtotal + $iva + ($deliveryEvaluation['available'] ? $shippingCost : 0), 2);
+        $deliverySettings = Delivery::settings();
 
-        return view('cart.index', compact('cart','subtotal','iva','total','shippingOptions','shippingType','shippingCost'));
+        return view('cart.index', compact('cart','subtotal','iva','total','shippingOptions','shippingType','shippingCost','deliveryEvaluation','deliverySettings'));
     }
 
     public function add(Request $request)
