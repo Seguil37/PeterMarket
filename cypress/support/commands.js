@@ -31,12 +31,12 @@
 
 // Login “normal” por UI (lo usamos dentro de cy.session)
 Cypress.Commands.add('login', (email = 'admin@tuapp.com', password = 'clave-super-segura') => {
-  cy.visit('/login');
+  cy.visit('/admin/login');
   cy.get('input[name="email"], #email, [data-cy="login-email"]').clear().type(email);
   cy.get('input[name="password"], #password, [data-cy="login-password"]').clear().type(password);
 
   cy.get('body').then(($b) => {
-    const btn = $b.find('button[type="submit"], [data-cy="login-submit"], input[type="submit"]');
+    const btn = $b.find('button[type="submit"], [data-cy="login-submit"], input[type="submit"], button:contains("Entrar al panel")');
     if (btn.length) {
       cy.wrap(btn[0]).click({ force: true });
     } else {
@@ -93,17 +93,19 @@ Cypress.Commands.add('adminCreateProduct', (p = {}) => {
     price: p.price ?? 9.99,
     stock: p.stock ?? 25,
     image_url: p.image_url || 'https://via.placeholder.com/200',
+    category_type: p.category_type || 'Lácteos',
   };
 
   cy.visitAsAdmin('/admin/products');
   cy.contains(/nuevo|crear/i).click({ force: true });
 
   cy.get('input[name="name"]').clear().type(prod.name);
+  cy.get('select[name="category_type"]').select(prod.category_type);
   cy.get('textarea[name="description"]').clear().type(prod.description);
   cy.get('input[name="price"]').clear().type(String(prod.price));
   cy.get('input[name="stock"]').clear().type(String(prod.stock));
   cy.get('input[name="image_url"]').clear().type(prod.image_url);
-  cy.contains(/guardar|crear|guardar cambios/i).click({ force: true });
+  cy.contains(/guardar|crear|guardar cambios|cargar imagen/i).click({ force: true });
 
   cy.url().should('include', '/admin/products');
 
