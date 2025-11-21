@@ -63,6 +63,9 @@ Cypress.Commands.add('loginSession', (email = 'admin@tuapp.com', password = 'cla
 
 // Visitar como admin (si te manda al login, recupera sesión y reintenta)
 Cypress.Commands.add('visitAsAdmin', (path) => {
+  // Asegura la sesión de administrador antes de visitar la ruta protegida
+  cy.loginSession();
+
   cy.visit(path, { failOnStatusCode: false });
   cy.url().then((u) => {
     if (u.includes('/login')) {
