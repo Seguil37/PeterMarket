@@ -36,7 +36,7 @@ describe('Flujo completo del sistema: Admin → Inventario → Carrito → Check
       cy.contains(new RegExp(prod.name))
         .closest('tr')
         .find('td')
-        .eq(3)
+        .eq(4)
         .invoke('text')
         .then(txt => {
           const currentStock = Number(txt.trim());
@@ -184,7 +184,7 @@ describe('Flujo completo del sistema: Admin → Inventario → Carrito → Check
       cy.contains(new RegExp(prod.name))
         .closest('tr')
         .find('td')
-        .eq(3)
+        .eq(4)
         .invoke('text')
         .then(txt => {
           const finalStock = Number(txt.trim());

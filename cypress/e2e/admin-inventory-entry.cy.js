@@ -10,7 +10,7 @@ describe('Inventario: registrar entrada y comprobar stock', () => {
     cy.adminCreateProduct({ name: baseName, price: 2.2, stock: 2 }).then((prod) => {
       // leer stock antes desde admin/products (columna stock es td index 3)
       cy.visitAsAdmin(`/admin/products?s=${encodeURIComponent(prod.name)}`);
-      cy.contains(new RegExp(prod.name)).closest('tr').find('td').eq(3).invoke('text')
+      cy.contains(new RegExp(prod.name)).closest('tr').find('td').eq(4).invoke('text')
         .then(txt => {
           const before = Number(txt.trim()) || prod.stock || 0;
 
@@ -26,7 +26,7 @@ describe('Inventario: registrar entrada y comprobar stock', () => {
 
           // verificar incremento
           cy.visitAsAdmin(`/admin/products?s=${encodeURIComponent(prod.name)}`);
-          cy.contains(new RegExp(prod.name)).closest('tr').find('td').eq(3).invoke('text')
+          cy.contains(new RegExp(prod.name)).closest('tr').find('td').eq(4).invoke('text')
             .then(txt2 => {
               const after = Number(txt2.trim()) || 0;
               expect(after).to.eq(before + addQty);
