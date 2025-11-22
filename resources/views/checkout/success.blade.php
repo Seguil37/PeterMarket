@@ -15,11 +15,16 @@
 
     <div class="bg-white rounded border p-4 mb-4">
       <h2 class="font-semibold mb-2">Datos de entrega</h2>
-      <p><strong>Dirección:</strong> {{ $order->shipping_address }}</p>
-      <p><strong>Ciudad / distrito:</strong> {{ $order->shipping_city }}</p>
-      <p><strong>Referencia:</strong> {{ $order->shipping_reference }}</p>
-      <p><strong>Tipo de envío:</strong> {{ $shippingOptions[$order->shipping_type]['label'] ?? $order->shipping_type }}</p>
-      <p><strong>Costo de delivery:</strong> S/ {{ number_format($order->shipping_cost,2) }}</p>
+      <p><strong>Tipo de entrega:</strong> {{ $order->delivery_type === 'pickup' ? 'Recojo en tienda' : 'Delivery a domicilio' }}</p>
+      @if($order->delivery_type === 'delivery')
+        <p><strong>Dirección:</strong> {{ $order->shipping_address }}</p>
+        <p><strong>Ciudad / distrito:</strong> {{ $order->shipping_city }}</p>
+        <p><strong>Referencia:</strong> {{ $order->shipping_reference }}</p>
+        <p><strong>Tipo de envío:</strong> {{ $shippingOptions[$order->shipping_type]['label'] ?? $order->shipping_type }}</p>
+        <p><strong>Costo de delivery:</strong> S/ {{ number_format($order->shipping_cost,2) }}</p>
+      @else
+        <p class="text-sm text-gray-600">Recogerás tu pedido directamente en tienda. No se cobra delivery.</p>
+      @endif
     </div>
 
     <div class="bg-white rounded border p-4 mb-4">
@@ -53,12 +58,19 @@
       <div class="flex justify-between text-lg mt-2 border-t pt-2"><span>Total final:</span><strong>S/ {{ number_format($order->total,2) }}</strong></div>
       <p class="text-xs text-gray-500 mt-1">Incluye IGV: S/ {{ number_format($order->tax,2) }}</p>
 
-      <div class="mt-3 p-3 rounded bg-gray-50 border text-sm">
-        <p class="font-semibold mb-1">{{ $deliveryEvaluation['message'] }}</p>
-        @if($order->subtotal < \App\Support\Delivery::MIN_TOTAL)
-          <p class="text-amber-700">El monto mínimo para delivery es S/ 35. Aumenta tu pedido o cambia a recojo en tienda.</p>
-        @endif
-      </div>
+      @if($order->delivery_type === 'delivery')
+        <div class="mt-3 p-3 rounded bg-gray-50 border text-sm">
+          <p class="font-semibold mb-1">{{ $deliveryEvaluation['message'] }}</p>
+          @if($order->subtotal < \App\Support\Delivery::MIN_TOTAL)
+            <p class="text-amber-700">El monto mínimo para delivery es S/ 35. Aumenta tu pedido o cambia a recojo en tienda.</p>
+          @endif
+        </div>
+      @else
+        <div class="mt-3 p-3 rounded bg-gray-50 border text-sm">
+          <p class="font-semibold mb-1">Recogerás tu compra en tienda. Te avisaremos cuando esté lista.</p>
+          <p class="text-gray-600">Puedes coordinar la hora de recojo respondiendo este correo.</p>
+        </div>
+      @endif
 
       <div class="mt-4 text-sm space-y-1 bg-emerald-50 border border-emerald-100 p-3 rounded">
         <p class="font-semibold">Información de referencia</p>
