@@ -16,14 +16,17 @@ class CartController extends Controller
         $cart = $this->cart();
         $subtotal = collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']);
         $iva = round($subtotal * 0.18, 2);
-        $deliveryEvaluation = Delivery::evaluate($subtotal);
+        $deliveryType = session()->getOldInput('delivery_type', 'delivery');
+        $deliveryEvaluation = $deliveryType === 'delivery'
+            ? Delivery::evaluate($subtotal)
+            : ['available' => true, 'cost' => 0.00, 'message' => 'Recojo en tienda sin costo de envío'];
         $shippingOptions = Delivery::options($deliveryEvaluation['cost']);
         $shippingType = session()->getOldInput('shipping_type', array_key_first($shippingOptions));
-        $shippingCost = $deliveryEvaluation['cost'];
-        $total = round($subtotal + $iva + ($deliveryEvaluation['available'] ? $shippingCost : 0), 2);
+        $shippingCost = $deliveryType === 'delivery' ? $deliveryEvaluation['cost'] : 0;
+        $total = round($subtotal + $iva + ($deliveryEvaluation['available'] && $deliveryType === 'delivery' ? $shippingCost : 0), 2);
         $deliverySettings = Delivery::settings();
 
-        return view('cart.index', compact('cart','subtotal','iva','total','shippingOptions','shippingType','shippingCost','deliveryEvaluation','deliverySettings'));
+        return view('cart.index', compact('cart','subtotal','iva','total','shippingOptions','shippingType','shippingCost','deliveryEvaluation','deliverySettings','deliveryType'));
     }
 
     public function add(Request $request)

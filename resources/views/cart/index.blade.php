@@ -2,7 +2,7 @@
 @section('title','Carrito de compras')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 py-6" x-data="cartPage({{ json_encode($shippingOptions) }}, '{{ $shippingType }}', {{ $shippingCost }}, {{ json_encode($deliverySettings) }}, {{ json_encode($deliveryEvaluation) }})">
+<div class="max-w-5xl mx-auto px-4 py-6" x-data="cartPage({{ json_encode($shippingOptions) }}, '{{ $shippingType }}', {{ $shippingCost }}, {{ json_encode($deliverySettings) }}, {{ json_encode($deliveryEvaluation) }}, '{{ $deliveryType }}')">
   <header class="flex items-center justify-between mb-4">
     <h1 class="text-2xl font-bold">Carrito de compras</h1>
     <a href="{{ route('catalog.index') }}" class="text-blue-600 underline">Seguir comprando</a>
@@ -83,21 +83,28 @@
             <label class="text-sm block mb-1">Correo</label>
             <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="w-full border rounded px-3 py-2">
           </div>
-          <div class="space-y-3">
+          <div>
+            <label class="text-sm block mb-1">¿Cómo deseas recibir tu pedido?</label>
+            <select name="delivery_type" x-model="deliveryType" @change="changeDelivery($event.target.value)" class="w-full border rounded px-3 py-2">
+              <option value="delivery">Delivery a domicilio</option>
+              <option value="pickup">Recoger en tienda</option>
+            </select>
+          </div>
+          <div class="space-y-3" x-show="deliveryType === 'delivery'">
             <div>
               <label class="text-sm block mb-1">Dirección completa</label>
-              <input name="shipping_address" value="{{ old('shipping_address') }}" required class="w-full border rounded px-3 py-2">
+              <input name="shipping_address" value="{{ old('shipping_address') }}" :required="deliveryType === 'delivery'" class="w-full border rounded px-3 py-2">
             </div>
             <div>
               <label class="text-sm block mb-1">Ciudad / distrito</label>
-              <input name="shipping_city" value="{{ old('shipping_city') }}" required class="w-full border rounded px-3 py-2">
+              <input name="shipping_city" value="{{ old('shipping_city') }}" :required="deliveryType === 'delivery'" class="w-full border rounded px-3 py-2">
             </div>
             <div>
               <label class="text-sm block mb-1">Referencia de domicilio</label>
-              <input name="shipping_reference" value="{{ old('shipping_reference') }}" required class="w-full border rounded px-3 py-2">
+              <input name="shipping_reference" value="{{ old('shipping_reference') }}" :required="deliveryType === 'delivery'" class="w-full border rounded px-3 py-2">
             </div>
           </div>
-          <div>
+          <div x-show="deliveryType === 'delivery'">
             <label class="text-sm block mb-1">Tipo de envío</label>
             <select name="shipping_type" @change="changeShipping($event.target.value)" class="w-full border rounded px-3 py-2">
               @foreach($shippingOptions as $key => $option)
@@ -107,6 +114,7 @@
               @endforeach
             </select>
           </div>
+          <p class="text-sm text-gray-600" x-show="deliveryType === 'pickup'">Recogerás tu pedido en tienda. No se cobrará delivery.</p>
           <fieldset>
             <legend class="text-sm mb-1">Método de pago</legend>
             <label class="flex items-center gap-2">
@@ -138,12 +146,13 @@
   {{-- Alpine para el comportamiento del carrito --}}
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
-  function cartPage(shippingOptions, initialType, shippingCost, deliverySettings, deliveryEvaluation) {
+  function cartPage(shippingOptions, initialType, shippingCost, deliverySettings, deliveryEvaluation, deliveryType) {
     return {
       shippingOptions,
       shippingType: initialType,
       deliverySettings,
       deliveryEvaluation,
+      deliveryType,
       quantities: {},
       totals: { subtotal: {{ $subtotal }}, iva: {{ $iva }}, shipping: shippingCost, total: {{ $total }} },
       formatMoney(v){ return Number(v).toFixed(2); },
@@ -157,14 +166,20 @@
         return { available: true, cost: this.deliverySettings.base_cost, message: 'Agrega un poco más a tu pedido para obtener delivery gratis ✨ (gratis desde S/ 45)' };
       },
       refreshTotals(){
-        this.deliveryEvaluation = this.computeShipping(this.totals.subtotal);
-        this.totals.shipping = this.deliveryEvaluation.available ? this.deliveryEvaluation.cost : 0;
+        this.deliveryEvaluation = this.deliveryType === 'delivery'
+          ? this.computeShipping(this.totals.subtotal)
+          : { available: true, cost: 0, message: 'Recojo en tienda sin costo de envío' };
+        this.totals.shipping = this.deliveryType === 'delivery' && this.deliveryEvaluation.available ? this.deliveryEvaluation.cost : 0;
         this.totals.total = +((this.totals.subtotal + this.totals.iva + this.totals.shipping).toFixed(2));
       },
       increment(id, stock){ const c = Number(this.quantities[id] ?? 1); this.updateQty(id, Math.min(c+1, stock)); },
       decrement(id){ const c = Number(this.quantities[id] ?? 1); this.updateQty(id, Math.max(c-1, 0)); },
       changeShipping(type){
         this.shippingType = type;
+        this.refreshTotals();
+      },
+      changeDelivery(type){
+        this.deliveryType = type;
         this.refreshTotals();
       },
       updateQty(id, qty){
