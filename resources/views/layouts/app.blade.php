@@ -34,6 +34,11 @@
               <div class="text-xs text-gray-500">{{ auth()->user()->email }}</div>
             </div>
 
+            <a href="{{ route('account.dashboard') }}"
+               class="{{ request()->routeIs('account.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+              Mi cuenta
+            </a>
+
             @if(auth()->user()->is_admin)
               <a href="{{ route('admin.dashboard') }}"
                  class="{{ request()->routeIs('admin.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
