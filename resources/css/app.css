@@ -22,19 +22,31 @@
 
 @layer components {
     .card-surface {
-        @apply bg-white/90 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl;
+        @apply bg-white/90 backdrop-blur-md border border-slate-100 shadow-md rounded-2xl;
     }
 
-    .pill-nav {
-        @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition shadow-sm;
+    .nav-link {
+        @apply inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 hover:text-blue-700 transition;
+    }
+
+    .nav-link.active {
+        @apply text-blue-700 underline underline-offset-8 decoration-2;
     }
 
     .btn-primary {
-        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md transition hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-400;
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-white bg-blue-600 transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 shadow-none;
     }
 
     .btn-outline {
-        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold border border-gray-300 text-gray-700 bg-white transition hover:border-gray-400 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-300;
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold border border-gray-300 text-gray-700 bg-white transition hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 shadow-none;
+    }
+
+    .btn-ghost {
+        @apply inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-gray-700 hover:text-blue-700 hover:bg-blue-50/60 transition;
+    }
+
+    .btn-soft {
+        @apply inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold bg-slate-100 text-gray-800 transition hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-100;
     }
 
     .badge {
@@ -42,6 +54,10 @@
     }
 
     .table-shell {
-        @apply overflow-hidden rounded-2xl border border-gray-200 shadow-lg bg-white;
+        @apply overflow-hidden rounded-2xl border border-slate-100 shadow-md bg-white;
+    }
+
+    .card-hover {
+        @apply transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg;
     }
 }

@@ -11,12 +11,10 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <a href="{{ route('catalog.index') }}" class="px-4 py-2 rounded-lg border text-sm font-semibold text-blue-700 bg-blue-50">Seguir comprando</a>
+        <a href="{{ route('catalog.index') }}" class="btn-ghost text-blue-700 hover:text-blue-800">Seguir comprando</a>
         <form method="POST" action="{{ route('logout') }}">
           @csrf
-          <button type="submit" class="px-4 py-2 rounded-lg border border-red-200 bg-red-50 text-red-700 font-semibold hover:bg-red-100">
-            Cerrar sesión
-          </button>
+          <button type="submit" class="btn-ghost text-red-600 hover:text-red-700">Cerrar sesión</button>
         </form>
       </div>
     </div>
@@ -28,9 +26,9 @@
     @endif
 
     <div class="grid gap-6 lg:grid-cols-3">
-      {{-- Historial de compras --}}
-      <div class="lg:col-span-2 bg-white border rounded-xl shadow-sm">
-        <div class="flex items-center justify-between px-5 py-4 border-b">
+      {{-- Historial de compras --}} 
+      <div class="lg:col-span-2 card-surface">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <div>
             <p class="text-xs uppercase tracking-wide text-gray-500">Compras</p>
             <h2 class="text-lg font-semibold">Historial de pedidos</h2>
@@ -44,7 +42,7 @@
             <p class="text-sm text-gray-500">Explora nuestros productos y realiza tu primera orden.</p>
           </div>
         @else
-          <div class="divide-y">
+          <div class="divide-y divide-slate-100">
             @foreach($orders as $order)
               <div class="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
@@ -59,12 +57,12 @@
             @endforeach
           </div>
 
-          <div class="px-5 py-4 border-t">{{ $orders->links() }}</div>
+          <div class="px-5 py-4 border-t border-slate-100">{{ $orders->links() }}</div>
         @endif
       </div>
 
-      {{-- Seguridad de la cuenta --}}
-      <div class="bg-white border rounded-xl shadow-sm p-5 space-y-4">
+      {{-- Seguridad de la cuenta --}} 
+      <div class="card-surface p-5 space-y-4">
         <div>
           <p class="text-xs uppercase tracking-wide text-gray-500">Seguridad</p>
           <h2 class="text-lg font-semibold">Cambiar contraseña</h2>
