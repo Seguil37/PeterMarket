@@ -9,6 +9,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AccountController;
 
 // Admin
 use App\Http\Controllers\Admin\DashboardController;
@@ -65,6 +66,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('admin.login.post');
 });
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Panel del cliente
+Route::middleware('auth')->group(function () {
+    Route::get('/mi-cuenta', [AccountController::class, 'index'])->name('account.dashboard');
+    Route::put('/mi-cuenta/password', [AccountController::class, 'updatePassword'])->name('account.password.update');
+});
 
 /* =====================  ADMIN (ÚNICO GRUPO, PROTEGIDO)  ===================== */
 Route::middleware(['auth','admin'])
