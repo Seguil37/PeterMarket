@@ -6,42 +6,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-dvh flex flex-col">
+<body class="min-h-dvh flex flex-col">
 
   {{-- HEADER --}}
-  <header class="bg-white border-b">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-      <a href="{{ route('catalog.index') }}" class="text-xl font-bold text-blue-700">Peter Market</a>
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold shadow-lg">PM</span>
+        <div>
+          <a href="{{ route('catalog.index') }}" class="text-xl font-bold text-gray-900">Peter Market</a>
+          <p class="text-xs text-gray-500">Supermercado inteligente y confiable</p>
+        </div>
+      </div>
 
-      <nav class="flex items-center gap-6">
+      <nav class="flex items-center gap-4">
         {{-- Productos --}}
         <a href="{{ route('catalog.index') }}"
-           class="{{ request()->routeIs('catalog.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+           class="pill-nav {{ request()->routeIs('catalog.*') ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-400' }}">
           Productos
         </a>
 
         {{-- Nosotros --}}
         <a href="{{ route('about') }}"
-           class="{{ request()->routeIs('about') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+           class="pill-nav {{ request()->routeIs('about') ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-400' }}">
           Nosotros
         </a>
 
         {{-- MODO ADMIN / ENTRAR / SALIR (PASO 7) --}}
         @auth
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
             <div class="text-right leading-tight">
               <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
               <div class="text-xs text-gray-500">{{ auth()->user()->email }}</div>
             </div>
 
             <a href="{{ route('account.dashboard') }}"
-               class="{{ request()->routeIs('account.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+               class="pill-nav {{ request()->routeIs('account.*') ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-400' }}">
               Mi cuenta
             </a>
 
             @if(auth()->user()->is_admin)
               <a href="{{ route('admin.dashboard') }}"
-                 class="{{ request()->routeIs('admin.*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+                 class="pill-nav {{ request()->routeIs('admin.*') ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-400' }}">
                 Admin
               </a>
             @endif
@@ -49,18 +55,18 @@
             <form method="POST" action="{{ route('logout') }}" class="inline">
               @csrf
               <button type="submit"
-                      class="text-gray-700 hover:text-gray-900">
+                      class="pill-nav bg-white text-gray-700 border border-gray-200 hover:border-gray-400">
                 Salir
               </button>
             </form>
           </div>
         @else
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
             <a href="{{ route('login') }}"
-               class="{{ request()->routeIs('login') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-gray-900' }}">
+               class="pill-nav {{ request()->routeIs('login') ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-400' }}">
               Entrar
             </a>
-            <a href="{{ route('admin.login') }}" class="text-sm text-gray-500 hover:text-gray-700">
+            <a href="{{ route('admin.login') }}" class="pill-nav bg-white text-gray-500 border border-gray-200 hover:border-gray-400">
               Acceso admin
             </a>
           </div>
@@ -68,10 +74,10 @@
 
         {{-- Carrito --}}
         <a href="{{ route('cart.index') }}"
-           class="relative px-3 py-1 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+           class="relative pill-nav bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg">
           Carrito
           @if(($cartCount ?? 0) > 0)
-            <span class="absolute -top-2 -right-2 min-w-6 h-6 px-1 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center">
+            <span class="absolute -top-2 -right-2 min-w-6 h-6 px-1 rounded-full bg-white text-emerald-600 text-xs font-semibold flex items-center justify-center shadow">
               {{ $cartCount }}
             </span>
           @endif
@@ -86,24 +92,24 @@
   </main>
 
   {{-- FOOTER --}}
-  <footer class="mt-8 bg-white border-t">
-    <div class="max-w-7xl mx-auto px-4 py-6 grid gap-4 sm:grid-cols-3 text-sm text-gray-600">
-      <div>
-        <div class="font-semibold text-gray-900">Peter Market</div>
-        <p>Supermercado moderno y accesible.</p>
+  <footer class="mt-12 bg-white/80 backdrop-blur border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 py-10 grid gap-6 sm:grid-cols-3 text-sm text-gray-600">
+      <div class="space-y-2">
+        <div class="font-semibold text-gray-900 text-base">Peter Market</div>
+        <p class="leading-relaxed">Supermercado moderno con compras ágiles, seguras y listas para tu día a día.</p>
       </div>
       <div>
-        <div class="font-semibold text-gray-900">Enlaces</div>
-        <ul class="space-y-1">
+        <div class="font-semibold text-gray-900 text-base mb-2">Enlaces</div>
+        <ul class="space-y-2">
           <li><a class="hover:underline" href="{{ route('catalog.index') }}">Productos</a></li>
           <li><a class="hover:underline" href="{{ route('about') }}">Nosotros</a></li>
           <li><a class="hover:underline" href="{{ route('cart.index') }}">Carrito</a></li>
         </ul>
       </div>
-      <div>
-        <div class="font-semibold text-gray-900">Soporte</div>
+      <div class="space-y-2">
+        <div class="font-semibold text-gray-900 text-base">Soporte</div>
         <p>soporte@petermarket.local</p>
-        <p class="mt-2">&copy; {{ date('Y') }} Peter Market • Todos los derechos reservados</p>
+        <p class="pt-2">&copy; {{ date('Y') }} Peter Market • Todos los derechos reservados</p>
       </div>
     </div>
   </footer>

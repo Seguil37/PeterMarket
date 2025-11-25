@@ -9,3 +9,39 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+@layer base {
+    body {
+        @apply bg-gradient-to-br from-slate-50 via-white to-blue-50 text-gray-900 antialiased;
+    }
+
+    h1, h2, h3, h4 {
+        @apply tracking-tight;
+    }
+}
+
+@layer components {
+    .card-surface {
+        @apply bg-white/90 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl;
+    }
+
+    .pill-nav {
+        @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition shadow-sm;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md transition hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-400;
+    }
+
+    .btn-outline {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold border border-gray-300 text-gray-700 bg-white transition hover:border-gray-400 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-300;
+    }
+
+    .badge {
+        @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide;
+    }
+
+    .table-shell {
+        @apply overflow-hidden rounded-2xl border border-gray-200 shadow-lg bg-white;
+    }
+}
