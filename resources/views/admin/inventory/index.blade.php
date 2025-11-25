@@ -15,7 +15,7 @@
 
   {{-- Formulario registrar movimiento --}}
   <div class="grid lg:grid-cols-3 gap-6">
-    <form method="POST" action="{{ route('admin.inventory.store') }}" class="lg:col-span-2 card-surface p-6 space-y-6">
+    <form id="nuevo" method="POST" action="{{ route('admin.inventory.store') }}" class="lg:col-span-2 card-surface p-6 space-y-6">
       @csrf
       <div class="flex items-center justify-between">
         <div>
@@ -144,7 +144,14 @@
           </tr>
           @empty
           <tr>
-            <td colspan="7" class="p-6 text-center text-gray-500">No hay movimientos que coincidan con tu búsqueda.</td>
+            <td colspan="7" class="p-8 text-center">
+              <div class="space-y-2 text-gray-600">
+                <div class="text-3xl">📄</div>
+                <p class="font-semibold text-gray-900">No hay movimientos que coincidan con tu búsqueda.</p>
+                <p class="text-sm">Registra tu primera entrada o salida para comenzar.</p>
+                <a href="#nuevo" class="btn-primary justify-center">Agregar movimiento</a>
+              </div>
+            </td>
           </tr>
           @endforelse
         </tbody>

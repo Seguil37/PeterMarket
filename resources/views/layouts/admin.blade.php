@@ -1,15 +1,15 @@
 @extends('layouts.app')
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-10 space-y-8">
-  <div class="flex flex-col gap-2 card-surface p-6">
+  <div class="flex flex-col gap-4 card-surface p-6">
     <div class="flex items-center justify-between gap-3 flex-wrap">
       <div>
         <p class="text-xs uppercase tracking-[0.2em] text-blue-600 font-semibold">Panel de Administración</p>
         <h1 class="text-3xl font-bold text-gray-900">Control central de Peter Market</h1>
         <p class="text-sm text-gray-600">Controla inventario, productos y cuentas de administradores con una vista moderna.</p>
       </div>
-      <div class="flex items-center gap-3 bg-blue-50 border border-blue-100 text-blue-700 px-4 py-3 rounded-xl shadow-inner">
-        <div class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-lg font-bold shadow">⚡</div>
+      <div class="flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl border border-blue-100">
+        <div class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-lg font-bold">⚡</div>
         <div class="text-sm leading-tight"><span class="font-semibold">Atajo rápido:</span> administra existencias y catálogos en segundos.</div>
       </div>
     </div>
@@ -25,10 +25,10 @@
       }
     @endphp
 
-    <nav class="flex flex-wrap gap-3">
+    <nav class="flex flex-wrap gap-2 sm:gap-4 text-sm font-semibold text-gray-700">
       @foreach($adminLinks as $link)
         <a href="{{ route($link['route']) }}"
-           class="pill-nav {{ request()->routeIs($link['route'].'*') ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-400' }}">
+           class="nav-link {{ request()->routeIs($link['route'].'*') ? 'active' : '' }}">
           {{ $link['label'] }}
         </a>
       @endforeach

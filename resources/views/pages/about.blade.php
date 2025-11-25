@@ -2,8 +2,12 @@
 @section('title','Nosotros')
 
 @section('content')
-  <div class="max-w-3xl mx-auto px-4 py-10 space-y-6">
-    <h1 class="text-3xl font-bold text-gray-800">Nosotros</h1>
+  <div class="max-w-4xl mx-auto px-4 py-10 space-y-6">
+    <div class="space-y-2">
+      <p class="text-xs uppercase tracking-[0.2em] text-blue-600 font-semibold">Sobre Peter Market</p>
+      <h1 class="text-3xl font-bold text-gray-900">Nosotros</h1>
+      <p class="text-sm text-gray-600">Supermercado moderno con enfoque digital y cercano.</p>
+    </div>
     
     <p class="text-lg text-gray-700 leading-relaxed">
       En <span class="font-semibold">Peter Market</span> nos dedicamos a brindar a nuestros clientes 
@@ -26,10 +30,10 @@
       consolidándonos como un referente en el sector.
     </p>
     
-    <div class="bg-gray-100 p-5 rounded-lg shadow">
-      <h2 class="text-xl font-semibold text-gray-800">Contáctanos</h2>
+    <div class="card-surface p-6 space-y-2">
+      <h2 class="text-xl font-semibold text-gray-900">Contáctanos</h2>
       <p class="mt-1">🕒 Horario de atención: <span class="font-medium">Lunes a Sábado de 9:00 a 20:00</span></p>
-      <p class="mt-1">📧 Email: <a href="mailto:soporte@petermarket.local" class="text-blue-600 font-medium">soporte@petermarket.local</a></p>
+      <p class="mt-1">📧 Email: <a href="mailto:soporte@petermarket.local" class="text-blue-700 font-medium hover:underline">soporte@petermarket.local</a></p>
     </div>
   </div>
 @endsection
