@@ -53,7 +53,7 @@
           $stock = (int)$product->stock;
           $badge = $stock <= 0 ? 'bg-red-100 text-red-700' : ($stock <= 10 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
           $label = $stock <= 0 ? 'Sin stock' : "Stock: $stock";
-          $excerpt = $product->description ? \Illuminate\Support\Str::limit($product->description, 90) : 'Categoría: ' . $product->category_type;
+          $excerpt = $product->description ?: 'Categoría: ' . $product->category_type;
         @endphp
         <article class="flex flex-col bg-white rounded-2xl border border-slate-100 shadow-md overflow-hidden card-hover">
           <div class="relative">
@@ -64,20 +64,20 @@
           <div class="p-5 flex flex-col gap-3 flex-1">
             <div class="space-y-1">
               <h2 class="text-lg font-semibold text-gray-900">{{ $product->name }}</h2>
-              <p class="text-sm text-gray-600 leading-relaxed">{{ $excerpt }}</p>
+              <p class="text-sm text-gray-600 leading-relaxed line-clamp-3">{{ $excerpt }}</p>
             </div>
             <div class="flex items-center justify-between">
               <div class="text-base font-semibold text-gray-900">S/ {{ number_format($product->price, 2) }}</div>
               <span class="text-xs px-2 py-1 rounded {{ $badge }}">{{ $label }}</span>
             </div>
-            <div class="mt-auto flex items-center justify-between gap-3 pt-2">
-              <a href="{{ route('catalog.show', $product) }}" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-700 hover:text-blue-800 hover:underline underline-offset-4">
-                Ver más
+            <div class="mt-auto flex flex-wrap items-center justify-between gap-3 pt-2">
+              <a href="{{ route('catalog.show', $product) }}" class="link-pill text-sm">
+                Ver más del producto
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
                   <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 0 1 1.414 0l5 5a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414-1.414L13.586 11H4a1 1 0 1 1 0-2h9.586l-3.293-3.293a1 1 0 0 1 0-1.414Z" clip-rule="evenodd" />
                 </svg>
               </a>
-              <form method="POST" action="{{ route('cart.add') }}" class="flex items-center gap-2">
+              <form method="POST" action="{{ route('cart.add') }}" class="flex items-center gap-2 flex-1 sm:flex-none sm:justify-end">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                 <label class="sr-only" for="qty-{{ $product->id }}">Cantidad</label>
