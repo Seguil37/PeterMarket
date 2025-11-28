@@ -23,14 +23,15 @@ describe('Compra completa como cliente – Peter Market', () => {
     // 2. Loguearse
     cy.get('input[name="email"]').type(userEmail);
     cy.get('input[name="password"]').type(userPassword);
-    cy.contains('button', /^Entrar$/).click();
+
+    cy.contains('button', 'Entrar').click();
 
     // 3. Ir a Productos
     cy.contains('a', 'Productos').click();
 
     // 4. Buscar producto y entrar a Ver más
     cy.contains('article', nombreProducto)
-      .within(() => cy.contains('a', 'Ver más').click());
+      .within(() => cy.contains('a', 'Ver más del producto').click());
 
     // 5. Verificar página del producto
     cy.url().should('include', '/products/');

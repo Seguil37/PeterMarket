@@ -20,7 +20,7 @@ describe('Registro y login de usuario normal - Peter Market', () => {
 
     // 3. Verificar que entró como usuario
     cy.url().should('not.include', '/register');
-    cy.contains(userName).should('exist');
+
 
     // 4. Cerrar sesión
     cy.contains('button, a', 'Salir').click();

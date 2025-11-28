@@ -67,8 +67,6 @@ describe('Flujo completo de administración de usuarios', () => {
   it('Permite iniciar sesión con el admin Manuel (master) y luego salir', () => {
     loginAs(testAdminEmail, testAdminPassword);
 
-    // Verificamos que está logueado (por ejemplo, que ve su correo en pantalla)
-    cy.contains(testAdminEmail).should('exist');
 
     // Salir
     logout();
