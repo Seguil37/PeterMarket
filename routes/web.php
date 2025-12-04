@@ -97,14 +97,18 @@ Route::middleware(['auth','admin'])
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/report', [OrderController::class, 'report'])->name('orders.report');
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::get('/orders/{order}/pdf', [OrderController::class, 'downloadPdf'])->name('orders.pdf');
         Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
 
         // Reportes
         Route::get('/reportes/mensual', [ReportController::class, 'monthly'])->name('reports.monthly');
+        Route::get('/reportes/mensual/pdf', [ReportController::class, 'monthlyPdf'])->name('reports.monthly.pdf');
 
         // Gestión de clientes
+        Route::get('/clientes/export/pdf', [CustomerController::class, 'exportPdf'])->name('customers.export.pdf');
         Route::get('/clientes', [CustomerController::class, 'index'])->name('customers.index');
         Route::get('/clientes/{customer}', [CustomerController::class, 'show'])->name('customers.show');
+        Route::get('/clientes/{customer}/pedidos/pdf', [CustomerController::class, 'ordersPdf'])->name('customers.orders.pdf');
         Route::put('/clientes/{customer}', [CustomerController::class, 'update'])->name('customers.update');
 
         // Gestión de administradores solo para Admin Master

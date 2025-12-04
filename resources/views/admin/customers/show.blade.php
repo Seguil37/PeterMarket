@@ -7,7 +7,8 @@
             <h2 class="text-2xl font-bold text-gray-900">{{ $customer->name }}</h2>
             <p class="text-gray-600">{{ $customer->email }}</p>
         </div>
-        <div class="flex gap-4">
+        <div class="flex gap-4 items-center flex-wrap">
+            <a href="{{ route('admin.customers.orders.pdf', $customer) }}" class="btn-secondary">Pedidos en PDF</a>
             <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
                 <p class="text-xs text-blue-600 uppercase font-semibold">Pedidos</p>
                 <p class="text-2xl font-bold text-blue-700">{{ $customer->orders()->count() }}</p>

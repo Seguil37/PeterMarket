@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\OrderStatusUpdatedMail;
 use App\Models\Order;
 use App\Models\User;
+use App\Support\SimplePdf;
 use App\Support\OrderStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -103,32 +104,76 @@ class OrderController extends Controller
 
         $orders = $query->with('items')->orderByDesc('created_at')->get();
 
-        $csv = $orders->map(function (Order $order) {
+        $totalSales = $orders->sum('total');
+        $totalProducts = $orders->flatMap->items->sum('quantity');
+        $statusSummary = $orders->groupBy('status')->map(fn ($group, $status) => OrderStatus::label($status) . ': ' . $group->count())->values()->implode(' | ');
+
+        $pdf = new SimplePdf();
+        $pdf->addTitle('Reporte de pedidos');
+        $pdf->addSubtitle($month ? 'Periodo: ' . $month : 'Todos los periodos');
+        $pdf->addKeyValueRows([
+            'Pedidos procesados' => $orders->count(),
+            'Total vendido' => 'S/ ' . number_format($totalSales, 2),
+            'Productos vendidos' => $totalProducts,
+            'Estados' => $statusSummary ?: 'Sin movimientos',
+            'Fecha de generación' => now()->format('d/m/Y H:i'),
+        ]);
+
+        $rows = $orders->map(function (Order $order) {
             return [
-                'Pedido' => $order->id,
-                'Cliente' => $order->customer_name,
-                'Correo' => $order->customer_email,
-                'Estado' => OrderStatus::label($order->status),
-                'Total' => $order->total,
-                'Fecha' => $order->created_at?->format('Y-m-d H:i'),
-                'Productos' => $order->items->sum('quantity'),
+                '#' . $order->id,
+                $order->customer_name,
+                OrderStatus::label($order->status),
+                'S/ ' . number_format($order->total, 2),
+                optional($order->created_at)->format('d/m/Y H:i'),
+                $order->items->sum('quantity'),
             ];
-        });
+        })->all();
 
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="reporte-pedidos.csv"',
-        ];
+        $pdf->addTable([
+            'Pedido', 'Cliente', 'Estado', 'Total', 'Fecha', 'Productos'
+        ], $rows, [70, 160, 90, 80, 120, 60]);
 
-        $callback = function () use ($csv) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['Pedido', 'Cliente', 'Correo', 'Estado', 'Total', 'Fecha', 'Productos']);
-            foreach ($csv as $row) {
-                fputcsv($handle, $row);
-            }
-            fclose($handle);
-        };
+        return $pdf->download('reporte-pedidos.pdf');
+    }
 
-        return response()->stream($callback, 200, $headers);
+    public function downloadPdf(Order $order)
+    {
+        $order->load(['items', 'user']);
+
+        $pdf = new SimplePdf();
+        $pdf->addTitle('Detalle de pedido #' . $order->id);
+        $pdf->addSubtitle('Generado el ' . now()->format('d/m/Y H:i'));
+
+        $pdf->addKeyValueRows([
+            'Cliente' => $order->customer_name . ' (' . $order->customer_email . ')',
+            'Total' => 'S/ ' . number_format($order->total, 2),
+            'Estado' => OrderStatus::label($order->status),
+            'Creado' => optional($order->created_at)->format('d/m/Y H:i'),
+        ]);
+
+        $pdf->addParagraph('Datos de entrega:', 11);
+        $pdf->addKeyValueRows([
+            'Dirección' => $order->shipping_address ?? 'No registrada',
+            'Ciudad' => $order->shipping_city ?? 'No indicada',
+            'Referencia' => $order->shipping_reference ?? 'Sin referencia',
+            'Pago' => $order->payment_method,
+        ], 10);
+
+        $pdf->addParagraph('Productos incluidos', 11);
+        $pdf->addTable([
+            'Producto', 'Cantidad', 'Total línea'
+        ], $order->items->map(fn ($item) => [
+            $item->name,
+            $item->quantity,
+            'S/ ' . number_format($item->line_total, 2),
+        ])->all(), [240, 80, 100]);
+
+        $pdf->addKeyValueRows([
+            'Subtotal' => 'S/ ' . number_format($order->items->sum('line_total'), 2),
+            'Total del pedido' => 'S/ ' . number_format($order->total, 2),
+        ], 11);
+
+        return $pdf->download('pedido-' . $order->id . '.pdf');
     }
 }

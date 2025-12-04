@@ -9,7 +9,7 @@
         <form method="GET" class="flex items-center gap-2 flex-wrap">
             <input type="month" name="month" value="{{ $month }}" class="input" />
             <button class="btn" type="submit">Actualizar</button>
-            <a class="btn-secondary" href="{{ route('admin.orders.report', ['month' => $month]) }}">Descargar CSV</a>
+            <a class="btn-secondary" href="{{ route('admin.reports.monthly.pdf', ['month' => $month]) }}">Descargar PDF</a>
         </form>
     </div>
 

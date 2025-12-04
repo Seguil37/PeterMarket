@@ -17,7 +17,7 @@
                 <input type="month" name="month" value="{{ $month }}" class="input" />
                 <button class="btn">Filtrar</button>
             </form>
-            <a class="btn-secondary" href="{{ route('admin.orders.report', ['month' => $month]) }}">Generar reporte CSV</a>
+            <a class="btn-secondary" href="{{ route('admin.orders.report', ['month' => $month]) }}">Descargar PDF</a>
         </div>
     </div>
 
