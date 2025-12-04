@@ -15,6 +15,20 @@
       <div class="text-sm text-gray-500">Ir directo al módulo de compras.</div>
     </a>
 
+    {{-- Pedidos y reportes --}}
+    <a href="{{ route('admin.orders.index') }}"
+       class="block rounded-2xl border p-5 bg-white hover:shadow transition">
+      <div class="text-lg font-medium">Pedidos</div>
+      <div class="text-sm text-gray-500">Dashboard de ventas, reportes y estados.</div>
+    </a>
+
+    {{-- Clientes --}}
+    <a href="{{ route('admin.customers.index') }}"
+       class="block rounded-2xl border p-5 bg-white hover:shadow transition">
+      <div class="text-lg font-medium">Clientes</div>
+      <div class="text-sm text-gray-500">Gestiona cuentas y revisa compras por usuario.</div>
+    </a>
+
     {{-- Productos (CRUD admin) --}}
     <a href="{{ route('admin.products.index') }}"
        class="block rounded-2xl border p-5 bg-white hover:shadow transition">

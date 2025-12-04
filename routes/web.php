@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\InventoryController; // <- si usas el módulo de inventario nuevo
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\OrderController;
 
 /* =====================  CATÁLOGO (HOME)  ===================== */
 Route::get('/', function (Request $request) {
@@ -89,6 +91,17 @@ Route::middleware(['auth','admin'])
 
         // CRUD de productos
         Route::resource('products', AdminProductController::class);
+
+        // Gestión de pedidos y reportes
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/report', [OrderController::class, 'report'])->name('orders.report');
+        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+
+        // Gestión de clientes
+        Route::get('/clientes', [CustomerController::class, 'index'])->name('customers.index');
+        Route::get('/clientes/{customer}', [CustomerController::class, 'show'])->name('customers.show');
+        Route::put('/clientes/{customer}', [CustomerController::class, 'update'])->name('customers.update');
 
         // Gestión de administradores solo para Admin Master
         Route::middleware('master')->group(function () {
