@@ -57,6 +57,11 @@
     </table>
 
     <p class="total">Total pagado: S/ {{ number_format($order->total, 2) }}</p>
+    
+    <p><strong>Información de contacto y seguimiento:</strong><br>
+        El pedido tiene un tiempo estimado de llegada de 3 días aproximadamente.<br>
+        En caso de presentarse algún inconveniente con el envío o la entrega, por favor comunicarse al número de contacto: +51 949 758 387.
+    </p>
 
     <p style="font-size: 12px; color: #6b7280; margin-top: 16px;">Si tienes dudas sobre tu pedido, responde a este correo y te ayudaremos.</p>
 </div>
