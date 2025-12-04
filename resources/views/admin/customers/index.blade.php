@@ -11,6 +11,7 @@
                 <input type="text" name="q" value="{{ $search }}" placeholder="Buscar por nombre o correo" class="input" />
                 <button type="submit" class="btn">Buscar</button>
             </form>
+            <a href="{{ route('admin.customers.export.pdf') }}" class="btn-secondary">Descargar PDF</a>
             <a href="{{ route('admin.reports.monthly') }}" class="btn-secondary">Ver reporte mensual</a>
         </div>
     </div>
