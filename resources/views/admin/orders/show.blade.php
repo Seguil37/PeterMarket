@@ -65,7 +65,8 @@
                     <input type="checkbox" name="notify" value="1" class="h-4 w-4" checked>
                     Notificar al cliente por correo
                 </label>
-                <button type="submit" class="btn">Actualizar estado</button>
+                <p class="text-xs text-gray-500">Estados disponibles: salió de la tienda, en camino y llegó al destino. Si el cliente no recibió su pedido podrá responder usando el número {{ \App\Support\OrderStatus::CONTACT_NUMBER }}.</p>
+                <button type="submit" class="btn">Confirmar estado</button>
             </form>
         </div>
     </div>

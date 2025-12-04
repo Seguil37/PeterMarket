@@ -27,7 +27,7 @@ class OrderStatus
             'delivered' => [
                 'label'        => 'Entregado',
                 'mail_subject' => 'Pedido entregado',
-                'mail_message' => 'El pedido ha llegado al destino.',
+                'mail_message' => 'El pedido ha llegado al destino. Si no recibió su pedido, por favor comuníquese al número ' . self::CONTACT_NUMBER . '.',
             ],
             'incident' => [
                 'label'        => 'Incidencia',

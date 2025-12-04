@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\InventoryController; // <- si usas el módulo de 
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ReportController;
 
 /* =====================  CATÁLOGO (HOME)  ===================== */
 Route::get('/', function (Request $request) {
@@ -97,6 +98,9 @@ Route::middleware(['auth','admin'])
         Route::get('/orders/report', [OrderController::class, 'report'])->name('orders.report');
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+
+        // Reportes
+        Route::get('/reportes/mensual', [ReportController::class, 'monthly'])->name('reports.monthly');
 
         // Gestión de clientes
         Route::get('/clientes', [CustomerController::class, 'index'])->name('customers.index');
