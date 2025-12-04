@@ -20,6 +20,7 @@
         ['label' => 'Inventario', 'route' => 'admin.inventory.index', 'pattern' => 'admin.inventory.*'],
         ['label' => 'Productos', 'route' => 'admin.products.index', 'pattern' => 'admin.products.*'],
         ['label' => 'Pedidos', 'route' => 'admin.orders.index', 'pattern' => 'admin.orders.*'],
+        ['label' => 'Reportes', 'route' => 'admin.reports.monthly', 'pattern' => 'admin.reports.*'],
         ['label' => 'Clientes', 'route' => 'admin.customers.index', 'pattern' => 'admin.customers.*'],
       ];
       if(auth()->user()?->is_master_admin) {

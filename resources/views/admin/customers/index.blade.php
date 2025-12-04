@@ -6,10 +6,13 @@
             <h2 class="text-2xl font-bold text-gray-900">Clientes</h2>
             <p class="text-gray-600 text-sm">Gestiona usuarios y revisa sus compras.</p>
         </div>
-        <form method="GET" class="flex items-center gap-2">
-            <input type="text" name="q" value="{{ $search }}" placeholder="Buscar por nombre o correo" class="input" />
-            <button type="submit" class="btn">Buscar</button>
-        </form>
+        <div class="flex items-center gap-2 flex-wrap">
+            <form method="GET" class="flex items-center gap-2">
+                <input type="text" name="q" value="{{ $search }}" placeholder="Buscar por nombre o correo" class="input" />
+                <button type="submit" class="btn">Buscar</button>
+            </form>
+            <a href="{{ route('admin.reports.monthly') }}" class="btn-secondary">Ver reporte mensual</a>
+        </div>
     </div>
 
     <div class="overflow-hidden rounded-2xl border">
@@ -32,7 +35,7 @@
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-700">{{ $customer->email }}</td>
                     <td class="px-4 py-3 text-sm">{{ $customer->orders_count }}</td>
-                    <td class="px-4 py-3 text-sm font-semibold">S/ {{ number_format($customer->total_spent, 2) }}</td>
+                    <td class="px-4 py-3 text-sm font-semibold">S/ {{ number_format($customer->total_spent ?? 0, 2) }}</td>
                     <td class="px-4 py-3 text-sm">
                         <a href="{{ route('admin.customers.show', $customer) }}" class="text-blue-600 hover:underline">Ver detalle</a>
                     </td>

@@ -22,6 +22,13 @@
       <div class="text-sm text-gray-500">Dashboard de ventas, reportes y estados.</div>
     </a>
 
+    {{-- Reportes mensuales --}}
+    <a href="{{ route('admin.reports.monthly') }}"
+       class="block rounded-2xl border p-5 bg-white hover:shadow transition">
+      <div class="text-lg font-medium">Reportes mensuales</div>
+      <div class="text-sm text-gray-500">Ventas, clientes frecuentes y top productos del mes.</div>
+    </a>
+
     {{-- Clientes --}}
     <a href="{{ route('admin.customers.index') }}"
        class="block rounded-2xl border p-5 bg-white hover:shadow transition">
