@@ -16,9 +16,11 @@
 
     @php
       $adminLinks = [
-        ['label' => 'Dashboard', 'route' => 'admin.dashboard'],
-        ['label' => 'Inventario', 'route' => 'admin.inventory.index'],
-        ['label' => 'Productos', 'route' => 'admin.products.index'],
+        ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'pattern' => 'admin.dashboard'],
+        ['label' => 'Inventario', 'route' => 'admin.inventory.index', 'pattern' => 'admin.inventory.*'],
+        ['label' => 'Productos', 'route' => 'admin.products.index', 'pattern' => 'admin.products.*'],
+        ['label' => 'Pedidos', 'route' => 'admin.orders.index', 'pattern' => 'admin.orders.*'],
+        ['label' => 'Clientes', 'route' => 'admin.customers.index', 'pattern' => 'admin.customers.*'],
       ];
       if(auth()->user()?->is_master_admin) {
           $adminLinks[] = ['label' => 'Administradores', 'route' => 'admin.admins.index'];
@@ -28,7 +30,7 @@
     <nav class="flex flex-wrap gap-2 sm:gap-4 text-sm font-semibold text-gray-700">
       @foreach($adminLinks as $link)
         <a href="{{ route($link['route']) }}"
-           class="nav-link {{ request()->routeIs($link['route'].'*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs($link['pattern'] ?? ($link['route'].'*')) ? 'active' : '' }}">
           {{ $link['label'] }}
         </a>
       @endforeach
