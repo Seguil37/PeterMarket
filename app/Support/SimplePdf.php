@@ -142,18 +142,20 @@ class SimplePdf
     protected function writeLine(string $text, float $size, string $font): void
     {
         $this->ensureSpace();
-        $escaped = $this->escapeText($text);
+        $encoded = $this->encodeText($text);
         $y = $this->cursorY;
         $x = $this->margin;
 
-        $this->pages[$this->currentPage] .= sprintf("BT /%s %.2f Tf 1 0 0 1 %.2f %.2f Tm (%s) Tj ET\n", $font, $size, $x, $y, $escaped);
+        $this->pages[$this->currentPage] .= sprintf("BT /%s %.2f Tf 1 0 0 1 %.2f %.2f Tm %s Tj ET\n", $font, $size, $x, $y, $encoded);
 
         $this->cursorY -= ($size + 4);
     }
 
-    protected function escapeText(string $text): string
+    protected function encodeText(string $text): string
     {
-        return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $text);
+        $utf16Text = "\xFE\xFF" . mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
+
+        return '<' . strtoupper(bin2hex($utf16Text)) . '>';
     }
 
     protected function wrapText(string $text, int $maxCharacters): array
